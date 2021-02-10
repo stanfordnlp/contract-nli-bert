@@ -19,7 +19,7 @@ import os
 
 import torch
 
-from contract_nli.dataset.squad import SquadV1Processor, SquadV2Processor, squad_convert_examples_to_features
+from contract_nli.dataset.encoder import SquadV1Processor, SquadV2Processor, squad_convert_examples_to_features
 
 
 
