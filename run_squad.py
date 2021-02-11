@@ -183,17 +183,17 @@ def train(args, train_dataset, model, tokenizer):
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
                 "token_type_ids": batch[2],
-                "start_positions": batch[3],
-                "end_positions": batch[4],
+                "class_labels": batch[3],
+                "span_labels": batch[4],
+                "p_mask": batch[6],
+                "is_impossible": batch[7]
             }
 
             if args.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
                 del inputs["token_type_ids"]
 
             if args.model_type in ["xlnet", "xlm"]:
-                inputs.update({"cls_index": batch[5], "p_mask": batch[6]})
-                if args.version_2_with_negative:
-                    inputs.update({"is_impossible": batch[7]})
+                inputs.update({"cls_index": batch[5]})
                 if hasattr(model, "config") and hasattr(model.config, "lang2id"):
                     inputs.update(
                         {"langs": (torch.ones(batch[0].shape, dtype=torch.int64) * args.lang_id).to(args.device)}
@@ -352,10 +352,7 @@ def evaluate(args, model, tokenizer, prefix=""):
     output_prediction_file = os.path.join(args.output_dir, "predictions_{}.json".format(prefix))
     output_nbest_file = os.path.join(args.output_dir, "nbest_predictions_{}.json".format(prefix))
 
-    if args.version_2_with_negative:
-        output_null_log_odds_file = os.path.join(args.output_dir, "null_odds_{}.json".format(prefix))
-    else:
-        output_null_log_odds_file = None
+    output_null_log_odds_file = os.path.join(args.output_dir, "null_odds_{}.json".format(prefix))
 
     # XLNet and XLM use a more complex post-processing procedure
     if args.model_type in ["xlnet", "xlm"]:
@@ -373,7 +370,7 @@ def evaluate(args, model, tokenizer, prefix=""):
             output_null_log_odds_file,
             start_n_top,
             end_n_top,
-            args.version_2_with_negative,
+            True,
             tokenizer,
             args.verbose_logging,
         )
@@ -389,7 +386,7 @@ def evaluate(args, model, tokenizer, prefix=""):
             output_nbest_file,
             output_null_log_odds_file,
             args.verbose_logging,
-            args.version_2_with_negative,
+            True,
             args.null_score_diff_threshold,
             tokenizer,
             os.path.join(args.output_dir, "all_scores_{}.json".format(prefix))
@@ -426,27 +423,17 @@ def main():
         help="The output directory where the model checkpoints and predictions will be written.",
     )
 
-    # Other parameters
-    parser.add_argument(
-        "--data_dir",
-        default=None,
-        type=str,
-        help="The input data dir. Should contain the .json files for the task."
-        + "If no data dir or train/predict files are specified, will run with tensorflow_datasets.",
-    )
     parser.add_argument(
         "--train_file",
         default=None,
         type=str,
-        help="The input training file. If a data dir is specified, will look for the file there"
-        + "If no data dir or train/predict files are specified, will run with tensorflow_datasets.",
+        help="The input training file.",
     )
     parser.add_argument(
         "--predict_file",
         default=None,
         type=str,
-        help="The input evaluation file. If a data dir is specified, will look for the file there"
-        + "If no data dir or train/predict files are specified, will run with tensorflow_datasets.",
+        help="The input evaluation file.",
     )
     parser.add_argument(
         "--config_name", default="", type=str, help="Pretrained config name or path if not the same as model_name"
@@ -464,11 +451,6 @@ def main():
         help="Where do you want to store the pre-trained models downloaded from s3",
     )
 
-    parser.add_argument(
-        "--version_2_with_negative",
-        action="store_true",
-        help="If true, the SQuAD examples contain some that do not have an answer.",
-    )
     parser.add_argument(
         "--null_score_diff_threshold",
         type=float,
@@ -496,8 +478,6 @@ def main():
         help="The maximum number of tokens for the question. Questions longer than this will "
         "be truncated to this length.",
     )
-    parser.add_argument("--do_train", action="store_true", help="Whether to run training.")
-    parser.add_argument("--do_eval", action="store_true", help="Whether to run eval on the dev set.")
     parser.add_argument(
         "--evaluate_during_training", action="store_true", help="Run evaluation during training at each logging step."
     )
@@ -600,7 +580,7 @@ def main():
     if (
         os.path.exists(args.output_dir)
         and os.listdir(args.output_dir)
-        and args.do_train
+        and args.train_file is not None
         and not args.overwrite_output_dir
     ):
         raise ValueError(
@@ -665,6 +645,7 @@ def main():
         args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
         do_lower_case=args.do_lower_case,
         cache_dir=args.cache_dir if args.cache_dir else None,
+        use_fast=False
     )
     model = AutoModelForQuestionAnswering.from_pretrained(
         args.model_name_or_path,
@@ -693,13 +674,13 @@ def main():
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
 
     # Training
-    if args.do_train:
+    if args.train_file is not None:
         train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=False)
         global_step, tr_loss = train(args, train_dataset, model, tokenizer)
         logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
     # Save the trained model and the tokenizer
-    if args.do_train and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
+    if args.train_file is not None and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
         logger.info("Saving model checkpoint to %s", args.output_dir)
         # Save a trained model, configuration and tokenizer using `save_pretrained()`.
         # They can then be reloaded using `from_pretrained()`
@@ -718,8 +699,8 @@ def main():
 
     # Evaluation - we can ask to evaluate all the checkpoints (sub-directories) in a directory
     results = {}
-    if args.do_eval and args.local_rank in [-1, 0]:
-        if args.do_train:
+    if args.predict_file is not None and args.local_rank in [-1, 0]:
+        if args.train_file is not None:
             logger.info("Loading checkpoints saved during training for evaluation")
             checkpoints = [args.output_dir]
             if args.eval_all_checkpoints:

@@ -2,3 +2,4 @@ numpy==1.20.1
 torch==1.7.1
 tqdm==4.56.1
 transformers==4.3.2
+tensorboard==2.4.1

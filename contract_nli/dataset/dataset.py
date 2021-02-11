@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import logging
 import os
 
 import torch
 
-from contract_nli.dataset.encoder import SquadV1Processor, SquadV2Processor, squad_convert_examples_to_features
-
-
+from contract_nli.dataset.encoder import squad_convert_examples_to_features
+from contract_nli.dataset.loader import ContractNLIExample
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +33,8 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
         torch.distributed.barrier()
 
     # Load data features from cache or dataset file
-    input_dir = args.data_dir if args.data_dir else "."
     cached_features_file = os.path.join(
-        input_dir,
+        ".",
         "cached_{}_{}_{}".format(
             "dev" if evaluate else "train",
             list(filter(None, args.model_name_or_path.split("/"))).pop(),
@@ -53,13 +52,11 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
             features_and_dataset["examples"],
         )
     else:
-        logger.info("Creating features from dataset file at %s", input_dir)
-
-        processor = SquadV2Processor() if args.version_2_with_negative else SquadV1Processor()
-        if evaluate:
-            examples = processor.get_dev_examples(args.data_dir, filename=args.predict_file)
-        else:
-            examples = processor.get_train_examples(args.data_dir, filename=args.train_file)
+        input_file = args.predict_file if evaluate else args.train_file
+        logger.info("Creating features from dataset file at %s", input_file)
+        with open(input_file) as fin:
+            input_dict = json.load(fin)
+        examples = ContractNLIExample.load(input_dict)
 
         features, dataset = squad_convert_examples_to_features(
             examples=examples,
@@ -68,7 +65,6 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
             doc_stride=args.doc_stride,
             max_query_length=args.max_query_length,
             is_training=not evaluate,
-            return_dataset="pt",
             threads=args.threads,
         )
 

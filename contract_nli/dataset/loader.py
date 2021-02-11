@@ -1,96 +1,119 @@
-class SquadProcessor(DataProcessor):
-    def _create_examples(self, input_data, set_type):
-        is_training = set_type == "train"
-        examples = []
-        for entry in tqdm(input_data):
-            title = entry["title"]
-            for paragraph in entry["paragraphs"]:
-                context_text = paragraph["context"]
-                for qa in paragraph["qas"]:
-                    qas_id = qa["id"]
-                    question_text = qa["question"]
-                    start_position_character = None
-                    answer_text = None
-                    answers = []
+from typing import List, Tuple
+import enum
 
-                    is_impossible = qa.get("is_impossible", False)
-                    if not is_impossible:
-                        if is_training:
-                            answer = qa["answers"][0]
-                            answer_text = answer["text"]
-                            start_position_character = answer["answer_start"]
-                        else:
-                            answers = qa["answers"]
-
-                    example = SquadExample(
-                        qas_id=qas_id,
-                        question_text=question_text,
-                        context_text=context_text,
-                        answer_text=answer_text,
-                        start_position_character=start_position_character,
-                        title=title,
-                        is_impossible=is_impossible,
-                        answers=answers,
-                    )
-                    examples.append(example)
-        return examples
+import tqdm
 
 
-class SquadExample:
+class NLILabel(enum.Enum):
+    NOT_MENTIONED = 0
+    ENTAILMENT = 1
+    CONTRADICTION = 2
+
+    @classmethod
+    def from_str(cls, s: str):
+        if s == 'na':
+            return cls.NOT_MENTIONED
+        elif s == 'true':
+            return cls.ENTAILMENT
+        elif s == 'false':
+            return cls.CONTRADICTION
+        else:
+            raise ValueError(f'Invalid input "{"s"}" to NLILabel.from_str.')
+
+
+class ContractNLIExample:
     """
-    A single training/test example for the Squad dataset, as loaded from disk.
+    A single training/test example for the contract NLI.
 
     Args:
-        qas_id: The example's unique identifier
-        question_text: The question string
+        data_id: The example's unique identifier
+        hypothesis_text: The hypothesis string
         context_text: The context string
         answer_text: The answer string
         start_position_character: The character position of the start of the answer
-        answers: None by default, this is used during evaluation. Holds answers as well as their start positions.
-        is_impossible: False by default, set to True if the example has no possible answer.
     """
 
     def __init__(
         self,
-        qas_id,
-        question_text,
+        data_id,
+        hypothesis_text,
+        hypothesis_tokens,
         context_text,
-        answer_text,
-        start_position_character,
-        answers=[],
-        is_impossible=False,
+        tokens,
+        splits,
+        char_to_word_offset,
+        label,
+        annotated_spans,
     ):
-        self.qas_id = qas_id
-        self.question_text = question_text
-        self.context_text = context_text
-        self.answer_text = answer_text
-        self.is_impossible = is_impossible
-        self.answers = answers
+        self.data_id: str = data_id
+        self.hypothesis_text: str = hypothesis_text
+        self.hypothesis_tokens: List[str] = hypothesis_tokens
+        self.context_text: str = context_text
+        self.tokens: List[str] = tokens
+        self.splits: List[int] = splits
+        self.char_to_word_offset: List[int] = char_to_word_offset
+        self.label: NLILabel = label
+        self.annotated_spans: List[int] = annotated_spans
+        self.is_impossible: bool = label == NLILabel.NOT_MENTIONED
 
-        self.start_position, self.end_position = 0, 0
-
-        doc_tokens = []
+    @staticmethod
+    def tokenize_and_align(text: str, spans: List[Tuple[int, int]]):
+        """
+        spans: Spans as character offsets. e.g. "world" in "Hello, world" will
+            be represented as (7, 12).
+        """
+        # Split on whitespace so that different tokens may be attributed to their original position.
+        tokens = []
         char_to_word_offset = []
         prev_is_whitespace = True
+        splits = {si for s in spans for si in s}
 
-        # Split on whitespace so that different tokens may be attributed to their original position.
-        for c in self.context_text:
-            if _is_whitespace(c):
+        for i, c in enumerate(text):
+            if c == ' ':
+                # splits will be ignored on space
                 prev_is_whitespace = True
             else:
-                if prev_is_whitespace:
-                    doc_tokens.append(c)
+                if prev_is_whitespace or i in splits:
+                    tokens.append(c)
                 else:
-                    doc_tokens[-1] += c
+                    tokens[-1] += c
                 prev_is_whitespace = False
-            char_to_word_offset.append(len(doc_tokens) - 1)
+            char_to_word_offset.append(len(tokens) - 1)
 
-        self.doc_tokens = doc_tokens
-        self.char_to_word_offset = char_to_word_offset
+        splits = [char_to_word_offset[s[0]] for s in spans]
+        return tokens, splits, char_to_word_offset
 
-        # Start and end positions only has a value during evaluation.
-        if start_position_character is not None and not is_impossible:
-            self.start_position = char_to_word_offset[start_position_character]
-            self.end_position = char_to_word_offset[
-                min(start_position_character + len(answer_text) - 1, len(char_to_word_offset) - 1)
-            ]
+    @classmethod
+    def load(cls, input_data) -> List['ContractNLIExample']:
+        examples = []
+        label_dict = {
+            label_id: label_info['hypothesis']
+            for label_id, label_info in input_data['labels'].items()}
+        for document in tqdm.tqdm(input_data['documents']):
+            if len(document['annotation_sets']) != 1:
+                raise RuntimeError(
+                    f'{len(document["annotation_sets"])} annotation sets given but '
+                    'we only support single annotation set.')
+            for label_id, annotation in document['annotation_sets'][0]['annotations'].items():
+                data_id = f'{document["id"]}_{label_id}'
+                context_text = document['text']
+                hypothesis_text = label_dict[label_id]
+
+                tokens, splits, char_to_word_offset = cls.tokenize_and_align(
+                    context_text, document['spans'])
+                hypothesis_tokens, _, _ = cls.tokenize_and_align(
+                    hypothesis_text, [])
+
+                example = cls(
+                    data_id=data_id,
+                    hypothesis_text=hypothesis_text,
+                    hypothesis_tokens=hypothesis_tokens,
+                    context_text=context_text,
+                    tokens=tokens,
+                    splits=splits,
+                    char_to_word_offset=char_to_word_offset,
+                    label=NLILabel.from_str(annotation['choice']),
+                    annotated_spans=annotation['spans'],
+                )
+                examples.append(example)
+        return examples
