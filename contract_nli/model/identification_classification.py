@@ -7,6 +7,8 @@ from transformers.file_utils import ModelOutput
 from transformers.models.bert import BertPreTrainedModel, BertModel
 from transformers.utils import logging
 
+from contract_nli.dataset.loader import NLILabel
+
 logger = logging.get_logger(__name__)
 
 
@@ -22,14 +24,19 @@ class IdentificationClassificationModelOutput(ModelOutput):
 
 class BertForIdentificationClassification(BertPreTrainedModel):
 
-    def __init__(self, config, ignore_impossible_cls: bool = True):
+    IMPOSSIBLE_STRATEGIES = {'ignore', 'label', 'not_mentioned'}
+
+    def __init__(self, config, impossible_strategy: str = 'ignore'):
         super().__init__(config)
         self.bert = BertModel(config, add_pooling_layer=True)
         self.class_outputs = nn.Linear(config.hidden_size, 3)
         self.span_outputs = nn.Linear(config.hidden_size, 2)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
-        self.ignore_impossible_cls = ignore_impossible_cls
+        if impossible_strategy not in self.IMPOSSIBLE_STRATEGIES:
+            raise ValueError(
+                f'impossible_strategy must be one of {self.IMPOSSIBLE_STRATEGIES}')
+        self.impossible_strategy = impossible_strategy
 
         self.init_weights()
 
@@ -84,10 +91,14 @@ class BertForIdentificationClassification(BertPreTrainedModel):
             assert is_impossible is not None
 
             loss_fct = nn.CrossEntropyLoss()
-            if self.ignore_impossible_cls:
+            if self.impossible_strategy == 'ignore':
                 class_labels = torch.where(
                     is_impossible == 0, class_labels,
                     torch.tensor(loss_fct.ignore_index).type_as(class_labels)
+                )
+            elif self.impossible_strategy == 'not_mentioned':
+                class_labels = torch.where(
+                    is_impossible == 0, class_labels, NLILabel.NOT_MENTIONED.value
                 )
             loss_cls = loss_fct(logits_cls, class_labels)
 
