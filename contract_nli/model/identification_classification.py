@@ -85,7 +85,7 @@ class BertForIdentificationClassification(BertPreTrainedModel):
             loss_fct = nn.CrossEntropyLoss()
             active_logits = logits_span.view(-1, 2)
             active_labels = torch.where(
-                p_mask.view(-1) == 1, span_labels.view(-1),
+                p_mask.view(-1) == 0, span_labels.view(-1),
                 torch.tensor(loss_fct.ignore_index).type_as(span_labels)
             )
             loss_span = loss_fct(active_logits, active_labels)
