@@ -16,6 +16,7 @@
 """ Finetuning the library models for question-answering on SQuAD (DistilBERT, Bert, XLM, XLNet)."""
 import argparse
 import glob
+import json
 import logging
 import os
 import random
@@ -40,8 +41,11 @@ from transformers import (
 from transformers.trainer_utils import is_main_process
 
 from contract_nli.dataset.dataset import load_and_cache_examples
-from contract_nli.model.identification_classification import BertForIdentificationClassification, IdentificationClassificationModelOutput
-from contract_nli.postprocess import IdentificationClassificationPartialResult, compute_predictions_logits
+from contract_nli.evaluation import evaluate_all
+from contract_nli.model.identification_classification import \
+    BertForIdentificationClassification, IdentificationClassificationModelOutput
+from contract_nli.postprocess import IdentificationClassificationPartialResult, \
+    compute_predictions_logits
 
 logger = logging.getLogger(__name__)
 
@@ -195,6 +199,8 @@ def train(args, train_dataset, model, tokenizer):
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel (not distributed) training
+                loss_cls = loss_cls.mean()
+                loss_span = loss_span.mean()
             if args.gradient_accumulation_steps > 1:
                 loss = loss / args.gradient_accumulation_steps
                 loss_cls = loss_cls / args.gradient_accumulation_steps
@@ -225,8 +231,18 @@ def train(args, train_dataset, model, tokenizer):
                     # Only evaluate when single GPU otherwise metrics may not average well
                     if args.local_rank == -1 and args.evaluate_during_training:
                         results = evaluate(args, model, tokenizer)
-                        for key, value in results.items():
-                            tb_writer.add_scalar("eval_{}".format(key), value, global_step)
+                        tb_writer.add_scalar(
+                            "eval_class_accuracy",
+                            results['micro_label_micro_doc']['class']['accuracy'], global_step)
+                        for metric in ('map', 'roc_auc', 'f1', 'recall', 'precision', 'accuracy'):
+                            tb_writer.add_scalar(
+                                f"eval_span_{metric}",
+                                results['micro_label_micro_doc']['span'][metric],
+                                global_step)
+                        for metric in ('loss', 'loss_cls', 'loss_span'):
+                            tb_writer.add_scalar(
+                                f"eval_{metric}", results[metric], global_step)
+
                     tb_writer.add_scalar("lr", scheduler.get_lr()[0], global_step)
                     tb_writer.add_scalar("loss", (tr_loss - logging_loss) / args.logging_steps, global_step)
                     tb_writer.add_scalar("loss_cls", accu_loss_cls / args.logging_steps, global_step)
@@ -285,7 +301,7 @@ def evaluate(args, model, tokenizer, prefix=""):
 
     all_results = []
     start_time = timeit.default_timer()
-
+    loss, loss_cls, loss_span = 0.0, 0.0, 0.0
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         model.eval()
         batch = tuple(t.to(args.device) for t in batch)
@@ -295,23 +311,35 @@ def evaluate(args, model, tokenizer, prefix=""):
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
                 "token_type_ids": batch[2],
-                "p_mask": batch[5]
+                "class_labels": batch[3],
+                "span_labels": batch[4],
+                "p_mask": batch[6],
+                "is_impossible": batch[7]
             }
-
             if args.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
                 del inputs["token_type_ids"]
 
-            feature_indices = batch[3]
+            feature_indices = batch[8]
 
             # XLNet and XLM use more arguments for their predictions
             if args.model_type in ["xlnet", "xlm"]:
-                inputs.update({"cls_index": batch[4]})
+                inputs.update({"cls_index": batch[5]})
                 # for lang_id-sensitive xlm models
                 if hasattr(model, "config") and hasattr(model.config, "lang2id"):
                     inputs.update(
                         {"langs": (torch.ones(batch[0].shape, dtype=torch.int64) * args.lang_id).to(args.device)}
                     )
-            outputs = model(**inputs)
+            outputs: IdentificationClassificationModelOutput = model(**inputs)
+
+            loss, loss_cls, loss_span = outputs.loss, outputs.loss_cls, outputs.loss_span
+            if args.n_gpu > 1:
+                loss = loss.sum()  # mean() to average on multi-gpu parallel (not distributed) training
+                loss_cls = loss_cls.sum()
+                loss_span = loss_span.sum()
+
+            loss += loss.item() * len(batch[0])
+            loss_cls += loss_cls.item() * len(batch[0])
+            loss_span += loss_span.item() * len(batch[0])
 
         for i, feature_index in enumerate(feature_indices):
             eval_feature = features[feature_index.item()]
@@ -327,7 +355,6 @@ def evaluate(args, model, tokenizer, prefix=""):
     evalTime = timeit.default_timer() - start_time
     logger.info("  Evaluation done in total %f secs (%f sec per example)", evalTime, evalTime / len(dataset))
 
-    import pdb; pdb.set_trace()
     all_results = compute_predictions_logits(
         examples,
         features,
@@ -335,7 +362,11 @@ def evaluate(args, model, tokenizer, prefix=""):
     )
 
     # Compute the F1 and exact scores.
-    results = squad_evaluate(examples, predictions)
+    results = evaluate_all(examples, all_results, [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
+    results['loss'] = float(loss / len(dataset))
+    results['loss_cls'] = float(loss_cls / len(dataset))
+    results['loss_span'] = float(loss_span / len(dataset))
+
     return results
 
 
@@ -640,7 +671,6 @@ def main():
         model.to(args.device)
 
     # Evaluation - we can ask to evaluate all the checkpoints (sub-directories) in a directory
-    results = {}
     if args.predict_file is not None and args.local_rank in [-1, 0]:
         if args.train_file is not None:
             logger.info("Loading checkpoints saved during training for evaluation")
@@ -663,15 +693,11 @@ def main():
             model = AutoModelForQuestionAnswering.from_pretrained(checkpoint)  # , force_download=True)
             model.to(args.device)
 
-            # Evaluate
             result = evaluate(args, model, tokenizer, prefix=global_step)
+            logger.info(f"Results@{global_step}: {json.dumps(result, indent=2)}")
+            with open(os.path.join(args.output_dir, f'result_{global_step}.json'), 'w') as fout:
+                json.dump(result, fout, indent=2)
 
-            result = dict((k + ("_{}".format(global_step) if global_step else ""), v) for k, v in result.items())
-            results.update(result)
-
-    logger.info("Results: {}".format(results))
-
-    return results
 
 
 if __name__ == "__main__":

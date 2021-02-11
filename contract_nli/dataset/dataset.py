@@ -68,7 +68,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False
             max_seq_length=args.max_seq_length,
             doc_stride=args.doc_stride,
             max_query_length=args.max_query_length,
-            is_training=not evaluate,
+            is_training=True,  # FIXME: stop using hard-coded option to force training
             threads=args.threads,
         )
 

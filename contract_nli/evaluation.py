@@ -10,7 +10,7 @@ from contract_nli.postprocess import IdentificationClassificationResult
 
 def evaluate_predicted_spans(y_true, y_pred) -> Dict[str, float]:
     return {
-        'precision': sklearn.metrics.precision_score(y_true, y_pred),
+        'precision': sklearn.metrics.precision_score(y_true, y_pred, zero_division=0),
         'recall': sklearn.metrics.recall_score(y_true, y_pred),
         'f1': sklearn.metrics.f1_score(y_true, y_pred),
         'accuracy': sklearn.metrics.accuracy_score(y_true, y_pred),
@@ -43,17 +43,14 @@ def evaluate_class(y_true, y_prob) -> Dict[str, float]:
     assert len(y_true) == len(y_prob)
     y_pred = np.argmax(y_prob, axis=1)
     metrics = {
-        'precision': sklearn.metrics.precision_score(y_true, y_pred),
-        'recall': sklearn.metrics.recall_score(y_true, y_pred),
-        'f1': sklearn.metrics.f1_score(y_true, y_pred),
-        'accuracy': sklearn.metrics.accuracy_score(y_true, y_pred),
+        'accuracy': sklearn.metrics.accuracy_score(y_true, y_pred)
     }
     for label in (NLILabel.ENTAILMENT, NLILabel.CONTRADICTION):
         ln = label.name.lower()
         _y_true = y_true == label.value
         _y_pred = y_pred == label.value
         metrics.update({
-            f'precision_{ln}': sklearn.metrics.precision_score(_y_true, _y_pred),
+            f'precision_{ln}': sklearn.metrics.precision_score(_y_true, _y_pred, zero_division=0),
             f'recall_{ln}': sklearn.metrics.recall_score(_y_true, _y_pred),
             f'f1_{ln}': sklearn.metrics.f1_score(_y_true, _y_pred),
         })
@@ -79,14 +76,16 @@ def evaluate_all(
     class_labels = defaultdict(list)
     for example in examples:
         label_id = example.data_id.split('_')[1]
-        span_label = np.zeros(len(example.splits))
-        for s in example.annotated_spans:
-            span_label[s] = 1
-        span_labels[label_id].append(span_label)
-        class_labels[label_id].append(example.label.value)
         result: IdentificationClassificationResult = id_to_result[example.data_id]
-        span_probs[label_id].append(result.span_logits[:, 1])
-        class_probs[label_id].append(result.class_logits)
+        class_labels[label_id].append(example.label.value)
+        class_probs[label_id].append(result.class_probs)
+        # FIXME: this calculates precision optimistically
+        if example.label != NLILabel.NOT_MENTIONED:
+            span_label = np.zeros(len(example.splits))
+            for s in example.annotated_spans:
+                span_label[s] = 1
+            span_labels[label_id].append(span_label)
+            span_probs[label_id].append(result.span_probs[:, 1])
     label_ids = sorted(span_labels.keys())
     return {
         'micro_label_micro_doc': {
