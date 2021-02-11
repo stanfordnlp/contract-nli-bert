@@ -12,13 +12,22 @@ import json
 import math
 import re
 import string
+from typing import List
 
 from transformers import BasicTokenizer
-
 from transformers.utils import logging
 
+from contract_nli.dataset.encoder import IdentificationClassificationFeatures
+from contract_nli.dataset.loader import ContractNLIExample
 
 logger = logging.get_logger(__name__)
+
+
+class IdentificationClassificationResult:
+    def __init__(self, unique_id, class_logits, span_logits):
+        self.class_logits = class_logits
+        self.span_logits = span_logits
+        self.unique_id = unique_id
 
 
 def normalize_answer(s):

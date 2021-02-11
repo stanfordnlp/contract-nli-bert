@@ -71,6 +71,7 @@ class IdentificationClassificationFeatures:
         token_is_max_context,
         tokens,
         token_to_orig_map,
+        span_to_orig_map,
         class_label,
         span_labels,
         is_impossible,
@@ -89,6 +90,7 @@ class IdentificationClassificationFeatures:
         self.token_is_max_context = token_is_max_context
         self.tokens = tokens
         self.token_to_orig_map = token_to_orig_map
+        self.span_to_orig_map = span_to_orig_map
 
         self.class_label = class_label
         self.span_labels = span_labels
@@ -107,14 +109,14 @@ def _new_check_is_max_context(doc_spans, cur_span_index, position):
     best_score = None
     best_span_index = None
     for (span_index, doc_span) in enumerate(doc_spans):
-        end = doc_span["start"] + doc_span["length"] - 1
+        end = doc_span["start"] + doc_span["paragraph_len"] - 1
         if position < doc_span["start"]:
             continue
         if position > end:
             continue
         num_left_context = position - doc_span["start"]
         num_right_context = end - position
-        score = min(num_left_context, num_right_context) + 0.01 * doc_span["length"]
+        score = min(num_left_context, num_right_context) + 0.01 * doc_span["paragraph_len"]
         if best_score is None or score > best_score:
             best_score = score
             best_span_index = span_index
@@ -178,36 +180,36 @@ def squad_convert_example_to_features(
         else tokenizer.model_max_length - tokenizer.max_len_single_sentence
     )
     sequence_pair_added_tokens = tokenizer.model_max_length - tokenizer.max_len_sentences_pair
+    query_with_special_tokens_length = len(truncated_query) + sequence_added_tokens
+    max_context_length = max_seq_length - sequence_pair_added_tokens - len(truncated_query)
 
     spans = []
-
-    import pdb; pdb.set_trace()
     start = 0
     covered_splits = set()
-    max_context_length = max_seq_length - sequence_pair_added_tokens - len(truncated_query)
     while len(all_splits - covered_splits) > 0:
         upcoming_splits = [i + start for i, s in enumerate(span_to_orig_index[start:])
                            if s != -1 and s not in covered_splits]
         if upcoming_splits[1] - upcoming_splits[0] > max_context_length:
             # a single span is larger than maximum allowed tokens ---- there are nothing we can do
             start = upcoming_splits[0]
-            last_span_idx = start + max_context_length
+            last_span_idx = upcoming_splits[1]
             covered_splits.add(upcoming_splits[0])
-        elif upcoming_splits[1] > max_context_length:
+        elif upcoming_splits[1] - start > max_context_length:
             # we can fit the first upcoming span if we modify "start"
-            start += upcoming_splits[0] - (upcoming_splits[1] - max_context_length)
+            start += (upcoming_splits[1] - max_context_length)
             last_span_idx = upcoming_splits[1]
             covered_splits.add(upcoming_splits[0])
         else:
             # we can fit at least one span
             last_span_idx = None
-            for i in range(start, min(start + max_context_length, len(all_doc_tokens))):
-                if i + 1 == len(all_doc_tokens) or span_to_orig_index[i + 1] != -1:
-                    covered_splits.add(i)
-                    last_span_idx = i + 1
+            for i in range(start, min(start + max_context_length, len(all_doc_tokens)) + 1):
+                if i == len(all_doc_tokens) or span_to_orig_index[i] != -1:
+                    if last_span_idx is not None:
+                        covered_splits.add(last_span_idx)
+                    last_span_idx = i
             assert last_span_idx is not None
 
-        split_tokens = all_doc_tokens[start:max(start + max_context_length, len(all_doc_tokens))]
+        split_tokens = all_doc_tokens[start:min(start + max_context_length, len(all_doc_tokens))]
 
         # Define the side we want to truncate / pad and the text/pair sorting
         if tokenizer.padding_side == "right":
@@ -226,6 +228,7 @@ def squad_convert_example_to_features(
             return_overflowing_tokens=False,
             return_token_type_ids=True
         )
+        assert len(encoded_dict['input_ids']) <= max_seq_length
 
         paragraph_len = len(split_tokens)
         if tokenizer.pad_token_id in encoded_dict["input_ids"]:
@@ -242,17 +245,23 @@ def squad_convert_example_to_features(
         tokens = tokenizer.convert_ids_to_tokens(non_padded_ids)
 
         token_to_orig_map = {}
+        span_to_orig_map = {}
         for i in range(paragraph_len):
-            index = len(truncated_query) + sequence_added_tokens + i if tokenizer.padding_side == "right" else i
-            token_to_orig_map[index] = tok_to_orig_index[start + i]
+            index = query_with_special_tokens_length + i if tokenizer.padding_side == "right" else i
+            if tok_to_orig_index[start + i] != -1:
+                token_to_orig_map[index] = tok_to_orig_index[start + i]
+                assert span_to_orig_index[start + i] == -1
+            else:
+                assert span_to_orig_index[start + i] != -1
+                span_to_orig_map[index] = span_to_orig_index[start + i]
 
         encoded_dict["paragraph_len"] = paragraph_len
         encoded_dict["tokens"] = tokens
         encoded_dict["token_to_orig_map"] = token_to_orig_map
-        encoded_dict["truncated_query_with_special_tokens_length"] = len(truncated_query) + sequence_added_tokens
+        encoded_dict["span_to_orig_map"] = span_to_orig_map
+        encoded_dict["truncated_query_with_special_tokens_length"] = query_with_special_tokens_length
         encoded_dict["token_is_max_context"] = {}
         encoded_dict["start"] = start
-        encoded_dict["length"] = paragraph_len
 
         spans.append(encoded_dict)
 
@@ -269,7 +278,7 @@ def squad_convert_example_to_features(
             index = (
                 j
                 if tokenizer.padding_side == "left"
-                else spans[doc_span_index]["truncated_query_with_special_tokens_length"] + j
+                else query_with_special_tokens_length + j
             )
             spans[doc_span_index]["token_is_max_context"][index] = is_max_context
 
@@ -279,25 +288,30 @@ def squad_convert_example_to_features(
 
         # p_mask: mask with 1 for token than cannot be in the answer (0 for token which can be in an answer)
         # Original TF implem also keep the classification token (set to 0)
-        p_mask = (np.ones(span["input_ids"]) != tokenizer.cls_token_id).astype(np.int32)
-        if tokenizer.padding_side == "right":
-            p_mask[len(truncated_query) + sequence_added_tokens :] = 0
-        else:
-            p_mask[-len(span["tokens"]) : -(len(truncated_query) + sequence_added_tokens)] = 0
+        p_mask = (np.array(span["input_ids"]) != tokenizer.cls_token_id).astype(np.int32)
 
         span_is_impossible = example.is_impossible
-        if is_training and not span_is_impossible:
-            doc_start = span["start"]
-            doc_end = span["start"] + span["length"] - 1
-            span_labels = np.array(span_to_orig_index[doc_start:doc_end])\
-                             .isin(example.annotated_spans)\
-                             .astype(int)
-            if not np.any(span_labels):
-                span_is_impossible = True
+        span_labels = np.zeros_like(span["input_ids"])
+        if is_training:
+            if not span_is_impossible:
+                doc_start = span["start"]
+                doc_end = span["start"] + span["paragraph_len"]
+                _span_labels = np.isin(
+                    np.array(span_to_orig_index[doc_start:doc_end]),
+                    example.annotated_spans).astype(int)
+                if not np.any(_span_labels):
+                    span_is_impossible = True
+                tok_start = query_with_special_tokens_length
+                tok_end = tok_start + span["paragraph_len"]
+                if tokenizer.padding_side == "right":
+                    span_labels[tok_start:tok_end] = _span_labels
+                else:
+                    span_labels[-tok_end:-tok_start] = _span_labels
             class_label = example.label.value
         else:
-            span_labels = np.zeros_like(span["input_ids"])
-            class_label = 0
+            class_label = -1
+
+        assert not np.any(np.logical_and(p_mask, span_labels))
 
         features.append(
             IdentificationClassificationFeatures(
@@ -305,13 +319,14 @@ def squad_convert_example_to_features(
                 span["attention_mask"],
                 span["token_type_ids"],
                 cls_index,
-                p_mask.tolist(),
+                p_mask,
                 example_index=0,  # Can not set unique_id and example_index here. They will be set after multiple processing.
                 unique_id=0,
                 paragraph_len=span["paragraph_len"],
                 token_is_max_context=span["token_is_max_context"],
                 tokens=span["tokens"],
                 token_to_orig_map=span["token_to_orig_map"],
+                span_to_orig_map=span["span_to_orig_map"],
                 class_label=class_label,
                 span_labels=span_labels,
                 is_impossible=span_is_impossible,
@@ -391,7 +406,7 @@ def squad_convert_examples_to_features(
         )
     """
     squad_convert_example_to_features_init(tokenizer)
-    features: List[IdentificationClassificationFeatures] = sum([
+    features = [
         squad_convert_example_to_features(
             example=e,
             max_seq_length=max_seq_length,
@@ -399,8 +414,7 @@ def squad_convert_examples_to_features(
             max_query_length=max_query_length,
             padding_strategy=padding_strategy,
             is_training=is_training)
-        for e in examples], [])
-
+        for e in examples]
     new_features = []
     unique_id = 1000000000
     example_index = 0
@@ -415,8 +429,9 @@ def squad_convert_examples_to_features(
             new_features.append(example_feature)
             unique_id += 1
         example_index += 1
-    features = new_features
+    features: List[IdentificationClassificationFeatures] = new_features
     del new_features
+
     # Convert to Tensors and build dataset
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
     all_attention_masks = torch.tensor([f.attention_mask for f in features], dtype=torch.long)
@@ -447,7 +462,3 @@ def squad_convert_examples_to_features(
         )
 
     return features, dataset
-
-
-
-

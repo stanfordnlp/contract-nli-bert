@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """ Finetuning the library models for question-answering on SQuAD (DistilBERT, Bert, XLM, XLNet)."""
-
-
 import argparse
 import glob
 import logging
@@ -25,11 +23,11 @@ import timeit
 
 import numpy as np
 import torch
+import transformers
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
+from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm, trange
-
-import transformers
 from transformers import (
     MODEL_FOR_QUESTION_ANSWERING_MAPPING,
     WEIGHTS_NAME,
@@ -39,19 +37,12 @@ from transformers import (
     AutoTokenizer,
     get_linear_schedule_with_warmup
 )
-from transformers.data.metrics.squad_metrics import (
-    compute_predictions_log_probs,
-    squad_evaluate,
-)
-from transformers.data.processors.squad import SquadResult
 from transformers.trainer_utils import is_main_process
 
-from contract_nli.squad_metrics import compute_predictions_logits
 from contract_nli.dataset.dataset import load_and_cache_examples
-
-
-from torch.utils.tensorboard import SummaryWriter
-
+from contract_nli.squad_metrics import compute_predictions_logits
+from contract_nli.model.identification_classification import BertForIdentificationClassification, IdentificationClassificationModelOutput
+from contract_nli.squad_metrics import IdentificationClassificationResult
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +150,7 @@ def train(args, train_dataset, model, tokenizer):
         except ValueError:
             logger.info("  Starting fine-tuning.")
 
-    tr_loss, logging_loss = 0.0, 0.0
+    tr_loss, logging_loss, accu_loss_cls, accu_loss_span = 0.0, 0.0, 0.0, 0.0
     model.zero_grad()
     train_iterator = trange(
         epochs_trained, int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0]
@@ -199,14 +190,16 @@ def train(args, train_dataset, model, tokenizer):
                         {"langs": (torch.ones(batch[0].shape, dtype=torch.int64) * args.lang_id).to(args.device)}
                     )
 
-            outputs = model(**inputs)
+            outputs: IdentificationClassificationModelOutput = model(**inputs)
             # model outputs are always tuple in transformers (see doc)
-            loss = outputs[0]
+            loss, loss_cls, loss_span = outputs.loss, outputs.loss_cls, outputs.loss_span
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel (not distributed) training
             if args.gradient_accumulation_steps > 1:
                 loss = loss / args.gradient_accumulation_steps
+                loss_cls = loss_cls / args.gradient_accumulation_steps
+                loss_span = loss_span / args.gradient_accumulation_steps
 
             if args.fp16:
                 with amp.scale_loss(loss, optimizer) as scaled_loss:
@@ -215,6 +208,8 @@ def train(args, train_dataset, model, tokenizer):
                 loss.backward()
 
             tr_loss += loss.item()
+            accu_loss_cls += loss_cls.items()
+            accu_loss_span += loss_span.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
                 if args.fp16:
                     torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
@@ -235,7 +230,10 @@ def train(args, train_dataset, model, tokenizer):
                             tb_writer.add_scalar("eval_{}".format(key), value, global_step)
                     tb_writer.add_scalar("lr", scheduler.get_lr()[0], global_step)
                     tb_writer.add_scalar("loss", (tr_loss - logging_loss) / args.logging_steps, global_step)
+                    tb_writer.add_scalar("loss_cls", accu_loss_cls / args.logging_steps, global_step)
+                    tb_writer.add_scalar("loss_span", accu_loss_span / args.logging_steps, global_step)
                     logging_loss = tr_loss
+                    accu_loss_cls, accu_loss_span = 0.0, 0.0
 
                 # Save model checkpoint
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
@@ -266,7 +264,8 @@ def train(args, train_dataset, model, tokenizer):
 
 
 def evaluate(args, model, tokenizer, prefix=""):
-    dataset, examples, features = load_and_cache_examples(args, tokenizer, evaluate=True, output_examples=True)
+    dataset, examples, features = load_and_cache_examples(
+        args, tokenizer, evaluate=True)
 
     if not os.path.exists(args.output_dir) and args.local_rank in [-1, 0]:
         os.makedirs(args.output_dir)
@@ -281,7 +280,6 @@ def evaluate(args, model, tokenizer, prefix=""):
     if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
         model = torch.nn.DataParallel(model)
 
-    # Eval!
     logger.info("***** Running evaluation {} *****".format(prefix))
     logger.info("  Num examples = %d", len(dataset))
     logger.info("  Batch size = %d", args.eval_batch_size)
@@ -298,6 +296,7 @@ def evaluate(args, model, tokenizer, prefix=""):
                 "input_ids": batch[0],
                 "attention_mask": batch[1],
                 "token_type_ids": batch[2],
+                "p_mask": batch[5]
             }
 
             if args.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
@@ -307,7 +306,7 @@ def evaluate(args, model, tokenizer, prefix=""):
 
             # XLNet and XLM use more arguments for their predictions
             if args.model_type in ["xlnet", "xlm"]:
-                inputs.update({"cls_index": batch[4], "p_mask": batch[5]})
+                inputs.update({"cls_index": batch[4]})
                 # for lang_id-sensitive xlm models
                 if hasattr(model, "config") and hasattr(model.config, "lang2id"):
                     inputs.update(
@@ -321,27 +320,9 @@ def evaluate(args, model, tokenizer, prefix=""):
 
             output = [to_list(output[i]) for output in outputs]
 
-            # Some models (XLNet, XLM) use 5 arguments for their predictions, while the other "simpler"
-            # models only use two.
-            if len(output) >= 5:
-                start_logits = output[0]
-                start_top_index = output[1]
-                end_logits = output[2]
-                end_top_index = output[3]
-                cls_logits = output[4]
-
-                result = SquadResult(
-                    unique_id,
-                    start_logits,
-                    end_logits,
-                    start_top_index=start_top_index,
-                    end_top_index=end_top_index,
-                    cls_logits=cls_logits,
-                )
-
-            else:
-                start_logits, end_logits = output
-                result = SquadResult(unique_id, start_logits, end_logits)
+            class_logits, span_logits = output
+            result = IdentificationClassificationResult(
+                unique_id, class_logits, span_logits)
 
             all_results.append(result)
 
@@ -354,43 +335,23 @@ def evaluate(args, model, tokenizer, prefix=""):
 
     output_null_log_odds_file = os.path.join(args.output_dir, "null_odds_{}.json".format(prefix))
 
-    # XLNet and XLM use a more complex post-processing procedure
-    if args.model_type in ["xlnet", "xlm"]:
-        start_n_top = model.config.start_n_top if hasattr(model, "config") else model.module.config.start_n_top
-        end_n_top = model.config.end_n_top if hasattr(model, "config") else model.module.config.end_n_top
 
-        predictions = compute_predictions_log_probs(
-            examples,
-            features,
-            all_results,
-            args.n_best_size,
-            args.max_answer_length,
-            output_prediction_file,
-            output_nbest_file,
-            output_null_log_odds_file,
-            start_n_top,
-            end_n_top,
-            True,
-            tokenizer,
-            args.verbose_logging,
-        )
-    else:
-        predictions = compute_predictions_logits(
-            examples,
-            features,
-            all_results,
-            args.n_best_size,
-            args.max_answer_length,
-            args.do_lower_case,
-            output_prediction_file,
-            output_nbest_file,
-            output_null_log_odds_file,
-            args.verbose_logging,
-            True,
-            args.null_score_diff_threshold,
-            tokenizer,
-            os.path.join(args.output_dir, "all_scores_{}.json".format(prefix))
-        )
+    predictions = compute_predictions_logits(
+        examples,
+        features,
+        all_results,
+        args.n_best_size,
+        args.max_answer_length,
+        args.do_lower_case,
+        output_prediction_file,
+        output_nbest_file,
+        output_null_log_odds_file,
+        args.verbose_logging,
+        True,
+        args.null_score_diff_threshold,
+        tokenizer,
+        os.path.join(args.output_dir, "all_scores_{}.json".format(prefix))
+    )
 
     # Compute the F1 and exact scores.
     results = squad_evaluate(examples, predictions)
@@ -647,7 +608,7 @@ def main():
         cache_dir=args.cache_dir if args.cache_dir else None,
         use_fast=False
     )
-    model = AutoModelForQuestionAnswering.from_pretrained(
+    model = BertForIdentificationClassification.from_pretrained(
         args.model_name_or_path,
         from_tf=bool(".ckpt" in args.model_name_or_path),
         config=config,
@@ -675,7 +636,7 @@ def main():
 
     # Training
     if args.train_file is not None:
-        train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=False)
+        train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False)[0]
         global_step, tr_loss = train(args, train_dataset, model, tokenizer)
         logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 

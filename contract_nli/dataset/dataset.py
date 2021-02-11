@@ -17,17 +17,21 @@
 import json
 import logging
 import os
+from typing import Tuple, List
 
 import torch
+from torch.utils.data import TensorDataset
 
-from contract_nli.dataset.encoder import squad_convert_examples_to_features
+from contract_nli.dataset.encoder import squad_convert_examples_to_features, \
+    IdentificationClassificationFeatures
 from contract_nli.dataset.loader import ContractNLIExample
 
 logger = logging.getLogger(__name__)
 
 
 
-def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=False):
+def load_and_cache_examples(args, tokenizer, evaluate=False
+                            ) -> Tuple[TensorDataset, List[ContractNLIExample], List[IdentificationClassificationFeatures]]:
     if args.local_rank not in [-1, 0] and not evaluate:
         # Make sure only the first process in distributed training process the dataset, and the others will use the cache
         torch.distributed.barrier()
@@ -76,6 +80,4 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
         # Make sure only the first process in distributed training process the dataset, and the others will use the cache
         torch.distributed.barrier()
 
-    if output_examples:
-        return dataset, examples, features
-    return dataset
+    return dataset, examples, features
