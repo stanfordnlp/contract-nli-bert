@@ -299,7 +299,7 @@ def evaluate(args, model, tokenizer, prefix=""):
 
     all_results = []
     start_time = timeit.default_timer()
-    loss, loss_cls, loss_span = 0.0, 0.0, 0.0
+    accu_loss, accu_loss_cls, accu_loss_span = 0.0, 0.0, 0.0
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         model.eval()
         batch = tuple(t.to(args.device) for t in batch)
@@ -335,9 +335,9 @@ def evaluate(args, model, tokenizer, prefix=""):
                 loss_cls = loss_cls.sum()
                 loss_span = loss_span.sum()
 
-            loss += loss.item() * len(batch[0])
-            loss_cls += loss_cls.item() * len(batch[0])
-            loss_span += loss_span.item() * len(batch[0])
+            accu_loss += loss.item() * len(batch[0])
+            accu_loss_cls += loss_cls.item() * len(batch[0])
+            accu_loss_span += loss_span.item() * len(batch[0])
 
         for i, feature_index in enumerate(feature_indices):
             eval_feature = features[feature_index.item()]
@@ -361,9 +361,9 @@ def evaluate(args, model, tokenizer, prefix=""):
 
     # Compute the F1 and exact scores.
     results = evaluate_all(examples, all_results, [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
-    results['loss'] = float(loss / len(dataset))
-    results['loss_cls'] = float(loss_cls / len(dataset))
-    results['loss_span'] = float(loss_span / len(dataset))
+    results['loss'] = float(accu_loss / len(dataset))
+    results['loss_cls'] = float(accu_loss_cls / len(dataset))
+    results['loss_span'] = float(accu_loss_span / len(dataset))
 
     return results
 
