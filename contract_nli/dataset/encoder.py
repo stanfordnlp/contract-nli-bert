@@ -198,15 +198,17 @@ def convert_example_to_features(
     while len(all_splits - covered_splits) > 0:
         upcoming_splits = [i for i in span_to_orig_index.keys()
                            if i >= start and i not in covered_splits]
-        if upcoming_splits[1] - upcoming_splits[0] > max_context_length:
+        assert len(upcoming_splits) > 0
+        second_split = upcoming_splits[1] if len(upcoming_splits) > 1 else len(all_doc_tokens)
+        if second_split - upcoming_splits[0] > max_context_length:
             # a single span is larger than maximum allowed tokens ---- there are nothing we can do
             start = upcoming_splits[0]
-            last_span_idx = upcoming_splits[1]
+            last_span_idx = second_split
             covered_splits.add(upcoming_splits[0])
-        elif upcoming_splits[1] - start > max_context_length:
+        elif second_split - start > max_context_length:
             # we can fit the first upcoming span if we modify "start"
-            start += (upcoming_splits[1] - max_context_length)
-            last_span_idx = upcoming_splits[1]
+            start += (second_split - max_context_length)
+            last_span_idx = second_split
             covered_splits.add(upcoming_splits[0])
         else:
             # we can fit at least one span
