@@ -1,4 +1,7 @@
-# Copyright 2020 The HuggingFace Team. All rights reserved.
+# Copyright 2020 The HuggingFace Team. and Hitachi America Ltd. All rights reserved.
+# This file has been adopted from https://github.com/huggingface/transformers
+# /blob/495c157d6fcfa29f2d9e1173582d2fb5a393c323/src/transformers/data/processors/squad.py
+# and has been modified. See git log for the full details of changes.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +17,7 @@
 
 from functools import partial
 from multiprocessing import Pool, cpu_count
-from typing import List, Optional
+from typing import List
 
 import numpy as np
 import torch
@@ -35,9 +38,9 @@ logger = logging.get_logger(__name__)
 
 class IdentificationClassificationFeatures:
     """
-    Single squad example features to be fed to a model. Those features are model-specific and can be crafted from
-    :class:`~transformers.data.processors.squad.SquadExample` using the
-    :method:`~transformers.data.processors.squad.squad_convert_examples_to_features` method.
+    Single example features to be fed to a model. Those features are model-specific and can be crafted from
+    :class:`~contract_nli.dataset.loader.ContractNLIExample` using the
+    :method:`~contract_nli.dataset.encoder.convert_examples_to_features` method.
 
     Args:
         input_ids: Indices of input sequence tokens in the vocabulary.
@@ -53,8 +56,12 @@ class IdentificationClassificationFeatures:
             If a token does not have their maximum context in this feature object, it means that another feature object
             has more information related to that token and should be prioritized over this feature for that token.
         tokens: list of tokens corresponding to the input ids
-        token_to_orig_map: mapping between the tokens and the original text, needed in order to identify the answer.
-
+        token_to_orig_map: mapping between the tokens and the original text.
+        span_to_orig_map: mapping between the spans and the original spans, needed in order to identify the answer.
+        class_label:
+        span_labels:
+        is_impossible:
+        data_id:
         encoding: optionally store the BatchEncoding with the fast-tokenizer alignement methods.
     """
 
@@ -155,7 +162,7 @@ def _tokenize(tokens: List[str], splits: List[int]):
     return all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index
 
 
-def squad_convert_example_to_features(
+def convert_example_to_features(
         example: ContractNLIExample,
         max_seq_length: int,
         doc_stride: int,
@@ -337,12 +344,12 @@ def squad_convert_example_to_features(
 
 
 
-def squad_convert_example_to_features_init(tokenizer_for_convert: PreTrainedTokenizerBase):
+def convert_example_to_features_init(tokenizer_for_convert: PreTrainedTokenizerBase):
     global tokenizer
     tokenizer = tokenizer_for_convert
 
 
-def squad_convert_examples_to_features(
+def convert_examples_to_features(
     examples,
     tokenizer,
     max_seq_length,
@@ -354,11 +361,11 @@ def squad_convert_examples_to_features(
     tqdm_enabled=True,
 ):
     """
-    Converts a list of examples into a list of features that can be directly given as input to a model. It is
-    model-dependant and takes advantage of many of the tokenizer's features to create the model's inputs.
+    Converts a list of examples into a list of features that can be directly
+    given as input to a model.
 
     Args:
-        examples: list of :class:`~transformers.data.processors.squad.SquadExample`
+        examples: list of :class:`~contract_nli.dataset.loader.ContractNLIExample`
         tokenizer: an instance of a child of :class:`~transformers.PreTrainedTokenizer`
         max_seq_length: The maximum sequence length of the inputs.
         doc_stride: The stride used when the context is too large and is split across several features.
@@ -366,29 +373,11 @@ def squad_convert_examples_to_features(
         is_training: whether to create features for model evaluation or model training.
         padding_strategy: Default to "max_length". Which padding strategy to use
         threads: multiple processing threads.
-
-
-    Returns:
-        list of :class:`~transformers.data.processors.squad.SquadFeatures`
-
-    Example::
-
-        processor = SquadV2Processor()
-        examples = processor.get_dev_examples(data_dir)
-
-        features = squad_convert_examples_to_features(
-            examples=examples,
-            tokenizer=tokenizer,
-            max_seq_length=args.max_seq_length,
-            doc_stride=args.doc_stride,
-            max_query_length=args.max_query_length,
-            is_training=not evaluate,
-        )
     """
     threads = min(threads, cpu_count())
-    with Pool(threads, initializer=squad_convert_example_to_features_init, initargs=(tokenizer,)) as p:
+    with Pool(threads, initializer=convert_example_to_features_init, initargs=(tokenizer,)) as p:
         annotate_ = partial(
-            squad_convert_example_to_features,
+            convert_example_to_features,
             max_seq_length=max_seq_length,
             doc_stride=doc_stride,
             max_query_length=max_query_length,
@@ -399,7 +388,7 @@ def squad_convert_examples_to_features(
             tqdm(
                 p.imap(annotate_, examples, chunksize=32),
                 total=len(examples),
-                desc="convert squad examples to features",
+                desc="convert examples to features",
                 disable=not tqdm_enabled,
             )
         )

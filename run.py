@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-""" Finetuning the library models for question-answering on SQuAD (DistilBERT, Bert, XLM, XLNet)."""
 import argparse
 import glob
 import json
@@ -493,12 +492,6 @@ def main():
         type=int,
         help="The maximum length of an answer that can be generated. This is needed because the start "
         "and end predictions are not conditioned on one another.",
-    )
-    parser.add_argument(
-        "--verbose_logging",
-        action="store_true",
-        help="If true, all of the warnings related to data processing will be printed. "
-        "A number of warnings are expected for a normal SQuAD evaluation.",
     )
     parser.add_argument(
         "--lang_id",

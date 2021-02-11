@@ -1,6 +1,9 @@
-# coding=utf-8
 # Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
-# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2018, NVIDIA CORPORATION.
+# Copyright (c) 2021, Hitachi America Ltd. All rights reserved.
+# This file has been adopted from https://github.com/huggingface/transformers
+# /blob/0c9bae09340dd8c6fdf6aa2ea5637e956efe0f7c/examples/question-answering/run.py
+# See git log for changes.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +25,7 @@ from typing import Tuple, List
 import torch
 from torch.utils.data import TensorDataset
 
-from contract_nli.dataset.encoder import squad_convert_examples_to_features, \
+from contract_nli.dataset.encoder import convert_examples_to_features, \
     IdentificationClassificationFeatures
 from contract_nli.dataset.loader import ContractNLIExample
 
@@ -62,7 +65,7 @@ def load_and_cache_examples(args, tokenizer, evaluate=False
             input_dict = json.load(fin)
         examples = ContractNLIExample.load(input_dict)
 
-        features, dataset = squad_convert_examples_to_features(
+        features, dataset = convert_examples_to_features(
             examples=examples,
             tokenizer=tokenizer,
             max_seq_length=args.max_seq_length,
