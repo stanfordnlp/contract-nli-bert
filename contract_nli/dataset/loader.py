@@ -50,6 +50,7 @@ class ContractNLIExample:
         self.hypothesis_tokens: List[str] = hypothesis_tokens
         self.context_text: str = context_text
         self.tokens: List[str] = tokens
+        # Note that splits are NOT unique
         self.splits: List[int] = splits
         self.char_to_word_offset: List[int] = char_to_word_offset
         self.label: NLILabel = label
@@ -78,7 +79,8 @@ class ContractNLIExample:
                 else:
                     tokens[-1] += c
                 prev_is_whitespace = False
-            char_to_word_offset.append(len(tokens) - 1)
+            # len(tokens) == 0 when first characters are spaces
+            char_to_word_offset.append(max(len(tokens) - 1, 0))
 
         splits = [char_to_word_offset[s[0]] for s in spans]
         return tokens, splits, char_to_word_offset

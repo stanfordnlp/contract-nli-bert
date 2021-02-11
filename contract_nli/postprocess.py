@@ -45,9 +45,10 @@ def compute_predictions_logits(
         for feature in features:
             result = unique_id_to_result[feature.unique_id]
             _span_probs = softmax(np.array(result.span_logits), axis=1)
-            for tok_idx, orig_span_idx in feature.span_to_orig_map.items():
-                span_probs[orig_span_idx] += _span_probs[tok_idx]
-                num_pred_spans[orig_span_idx] += 1
+            for tok_idx, orig_span_indices in feature.span_to_orig_map.items():
+                for orig_span_idx in orig_span_indices:
+                    span_probs[orig_span_idx] += _span_probs[tok_idx]
+                    num_pred_spans[orig_span_idx] += 1
             class_probs += softmax(result.class_logits)
         assert np.all(num_pred_spans > 0)
         span_probs /= num_pred_spans[:, None]

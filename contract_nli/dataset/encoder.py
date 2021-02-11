@@ -17,7 +17,8 @@
 
 from functools import partial
 from multiprocessing import Pool, cpu_count
-from typing import List
+from typing import List, Dict
+from collections import defaultdict
 
 import numpy as np
 import torch
@@ -97,7 +98,7 @@ class IdentificationClassificationFeatures:
         self.token_is_max_context = token_is_max_context
         self.tokens = tokens
         self.token_to_orig_map = token_to_orig_map
-        self.span_to_orig_map = span_to_orig_map
+        self.span_to_orig_map: Dict[int, List[int]] = span_to_orig_map
 
         self.class_label = class_label
         self.span_labels = span_labels
@@ -134,12 +135,14 @@ def _new_check_is_max_context(doc_spans, cur_span_index, position):
 def _tokenize(tokens: List[str], splits: List[int]):
     tok_to_orig_index = []
     orig_to_tok_index = []
-    span_to_orig_index = []
     all_doc_tokens = []
-    splits = {s: i for i, s in enumerate(splits)}
+    tok_to_orig_span_index = defaultdict(list)
+    for i, s in enumerate(splits):
+        tok_to_orig_span_index[s].append(i)
+    span_to_orig_index = dict()
     for (i, token) in enumerate(tokens):
-        if i in splits:
-            span_to_orig_index.append(splits[i])
+        if i in tok_to_orig_span_index:
+            span_to_orig_index[len(all_doc_tokens)] = tok_to_orig_span_index[i]
             tok_to_orig_index.append(-1)
             # FIXME: do NOT use cls_token but add an additional_special_token
             all_doc_tokens.append(tokenizer.cls_token)
@@ -156,7 +159,6 @@ def _tokenize(tokens: List[str], splits: List[int]):
         else:
             sub_tokens = tokenizer.tokenize(token)
         for sub_token in sub_tokens:
-            span_to_orig_index.append(-1)
             tok_to_orig_index.append(i)
             all_doc_tokens.append(sub_token)
     return all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index
@@ -174,7 +176,6 @@ def convert_example_to_features(
 
     all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index = _tokenize(
         example.tokens, example.splits)
-    all_splits = {i for i, s in enumerate(span_to_orig_index) if s >= 0}
 
     truncated_query = _tokenize(example.hypothesis_tokens, [])[0][:max_query_length]
 
@@ -193,9 +194,10 @@ def convert_example_to_features(
     spans = []
     start = 0
     covered_splits = set()
+    all_splits = set(span_to_orig_index.keys())
     while len(all_splits - covered_splits) > 0:
-        upcoming_splits = [i + start for i, s in enumerate(span_to_orig_index[start:])
-                           if s != -1 and s not in covered_splits]
+        upcoming_splits = [i for i in span_to_orig_index.keys()
+                           if i >= start and i not in covered_splits]
         if upcoming_splits[1] - upcoming_splits[0] > max_context_length:
             # a single span is larger than maximum allowed tokens ---- there are nothing we can do
             start = upcoming_splits[0]
@@ -210,7 +212,7 @@ def convert_example_to_features(
             # we can fit at least one span
             last_span_idx = None
             for i in range(start, min(start + max_context_length, len(all_doc_tokens)) + 1):
-                if i == len(all_doc_tokens) or span_to_orig_index[i] != -1:
+                if i == len(all_doc_tokens) or i in span_to_orig_index:
                     if last_span_idx is not None:
                         covered_splits.add(last_span_idx)
                     last_span_idx = i
@@ -257,9 +259,9 @@ def convert_example_to_features(
             index = query_with_special_tokens_length + i if tokenizer.padding_side == "right" else i
             if tok_to_orig_index[start + i] != -1:
                 token_to_orig_map[index] = tok_to_orig_index[start + i]
-                assert span_to_orig_index[start + i] == -1
+                assert (start + i) not in span_to_orig_index
             else:
-                assert span_to_orig_index[start + i] != -1
+                assert (start + i) in span_to_orig_index
                 span_to_orig_map[index] = span_to_orig_index[start + i]
 
         encoded_dict["paragraph_len"] = paragraph_len
@@ -303,9 +305,11 @@ def convert_example_to_features(
             if not span_is_impossible:
                 doc_start = span["start"]
                 doc_end = span["start"] + span["paragraph_len"]
-                _span_labels = np.isin(
-                    np.array(span_to_orig_index[doc_start:doc_end]),
-                    example.annotated_spans).astype(int)
+                annotated_spans = set(example.annotated_spans)
+                _span_labels = np.array([
+                    any((s in annotated_spans for s in span_to_orig_index.get(i, [])))
+                    for i in range(doc_start, doc_end)
+                ]).astype(int)
                 if not np.any(_span_labels):
                     span_is_impossible = True
                 tok_start = query_with_special_tokens_length
