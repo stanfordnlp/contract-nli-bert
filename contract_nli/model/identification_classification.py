@@ -22,12 +22,14 @@ class IdentificationClassificationModelOutput(ModelOutput):
 
 class BertForIdentificationClassification(BertPreTrainedModel):
 
-    def __init__(self, config):
+    def __init__(self, config, ignore_impossible_cls: bool = True):
         super().__init__(config)
         self.bert = BertModel(config, add_pooling_layer=True)
         self.class_outputs = nn.Linear(config.hidden_size, 3)
         self.span_outputs = nn.Linear(config.hidden_size, 2)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
+
+        self.ignore_impossible_cls = ignore_impossible_cls
 
         self.init_weights()
 
@@ -80,7 +82,14 @@ class BertForIdentificationClassification(BertPreTrainedModel):
             assert p_mask is not None
             assert span_labels is not None
             assert is_impossible is not None
-            loss_cls = nn.CrossEntropyLoss()(logits_cls, class_labels)
+
+            loss_fct = nn.CrossEntropyLoss()
+            if self.ignore_impossible_cls:
+                class_labels = torch.where(
+                    is_impossible == 0, class_labels,
+                    torch.tensor(loss_fct.ignore_index).type_as(class_labels)
+                )
+            loss_cls = loss_fct(logits_cls, class_labels)
 
             loss_fct = nn.CrossEntropyLoss()
             active_logits = logits_span.view(-1, 2)
