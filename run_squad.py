@@ -40,9 +40,8 @@ from transformers import (
 from transformers.trainer_utils import is_main_process
 
 from contract_nli.dataset.dataset import load_and_cache_examples
-from contract_nli.squad_metrics import compute_predictions_logits
 from contract_nli.model.identification_classification import BertForIdentificationClassification, IdentificationClassificationModelOutput
-from contract_nli.squad_metrics import IdentificationClassificationResult
+from contract_nli.postprocess import IdentificationClassificationPartialResult, compute_predictions_logits
 
 logger = logging.getLogger(__name__)
 
@@ -208,7 +207,7 @@ def train(args, train_dataset, model, tokenizer):
                 loss.backward()
 
             tr_loss += loss.item()
-            accu_loss_cls += loss_cls.items()
+            accu_loss_cls += loss_cls.item()
             accu_loss_span += loss_span.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
                 if args.fp16:
@@ -318,10 +317,9 @@ def evaluate(args, model, tokenizer, prefix=""):
             eval_feature = features[feature_index.item()]
             unique_id = int(eval_feature.unique_id)
 
-            output = [to_list(output[i]) for output in outputs]
-
-            class_logits, span_logits = output
-            result = IdentificationClassificationResult(
+            class_logits = to_list(outputs.class_logits[i])
+            span_logits = to_list(outputs.span_logits[i])
+            result = IdentificationClassificationPartialResult(
                 unique_id, class_logits, span_logits)
 
             all_results.append(result)
@@ -329,28 +327,11 @@ def evaluate(args, model, tokenizer, prefix=""):
     evalTime = timeit.default_timer() - start_time
     logger.info("  Evaluation done in total %f secs (%f sec per example)", evalTime, evalTime / len(dataset))
 
-    # Compute predictions
-    output_prediction_file = os.path.join(args.output_dir, "predictions_{}.json".format(prefix))
-    output_nbest_file = os.path.join(args.output_dir, "nbest_predictions_{}.json".format(prefix))
-
-    output_null_log_odds_file = os.path.join(args.output_dir, "null_odds_{}.json".format(prefix))
-
-
-    predictions = compute_predictions_logits(
+    import pdb; pdb.set_trace()
+    all_results = compute_predictions_logits(
         examples,
         features,
-        all_results,
-        args.n_best_size,
-        args.max_answer_length,
-        args.do_lower_case,
-        output_prediction_file,
-        output_nbest_file,
-        output_null_log_odds_file,
-        args.verbose_logging,
-        True,
-        args.null_score_diff_threshold,
-        tokenizer,
-        os.path.join(args.output_dir, "all_scores_{}.json".format(prefix))
+        all_results
     )
 
     # Compute the F1 and exact scores.

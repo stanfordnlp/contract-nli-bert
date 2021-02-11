@@ -385,7 +385,6 @@ def squad_convert_examples_to_features(
             is_training=not evaluate,
         )
     """
-    """
     threads = min(threads, cpu_count())
     with Pool(threads, initializer=squad_convert_example_to_features_init, initargs=(tokenizer,)) as p:
         annotate_ = partial(
@@ -404,17 +403,6 @@ def squad_convert_examples_to_features(
                 disable=not tqdm_enabled,
             )
         )
-    """
-    squad_convert_example_to_features_init(tokenizer)
-    features = [
-        squad_convert_example_to_features(
-            example=e,
-            max_seq_length=max_seq_length,
-            doc_stride=doc_stride,
-            max_query_length=max_query_length,
-            padding_strategy=padding_strategy,
-            is_training=is_training)
-        for e in examples]
     new_features = []
     unique_id = 1000000000
     example_index = 0
