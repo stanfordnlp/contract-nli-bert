@@ -666,7 +666,7 @@ def main():
 
         # Load a trained model and vocabulary that you have fine-tuned
         model = BertForIdentificationClassification.from_pretrained(args.output_dir)  # , force_download=True)
-        tokenizer = AutoTokenizer.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
+        tokenizer = AutoTokenizer.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case, use_fast=False)
         model.to(args.device)
 
     # Evaluation - we can ask to evaluate all the checkpoints (sub-directories) in a directory
