@@ -670,7 +670,7 @@ def main():
             if args.eval_all_checkpoints:
                 checkpoints = list(
                     os.path.dirname(c)
-                    for c in sorted(glob.glob(args.output_dir + "/**/" + WEIGHTS_NAME, recursive=True))
+                    for c in sorted(glob.glob(args.output_dir + "/*/" + WEIGHTS_NAME))
                 )
 
         else:
