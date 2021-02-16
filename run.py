@@ -422,14 +422,6 @@ def main():
         type=str,
         help="Where do you want to store the pre-trained models downloaded from s3",
     )
-
-    parser.add_argument(
-        "--null_score_diff_threshold",
-        type=float,
-        default=0.0,
-        help="If null_score - best_non_null is greater than the threshold predict null.",
-    )
-
     parser.add_argument(
         "--max_seq_length",
         default=384,
@@ -481,19 +473,6 @@ def main():
         help="If > 0: set total number of training steps to perform. Override num_train_epochs.",
     )
     parser.add_argument("--warmup_steps", default=0, type=int, help="Linear warmup over warmup_steps.")
-    parser.add_argument(
-        "--n_best_size",
-        default=20,
-        type=int,
-        help="The total number of n-best predictions to generate in the nbest_predictions.json output file.",
-    )
-    parser.add_argument(
-        "--max_answer_length",
-        default=30,
-        type=int,
-        help="The maximum length of an answer that can be generated. This is needed because the start "
-        "and end predictions are not conditioned on one another.",
-    )
     parser.add_argument(
         "--lang_id",
         default=0,
