@@ -418,7 +418,7 @@ def main():
     )
     parser.add_argument(
         "--cache_dir",
-        default="",
+        default=None,
         type=str,
         help="Where do you want to store the pre-trained models downloaded from s3",
     )
@@ -599,25 +599,30 @@ def main():
 
     # Load pretrained model and tokenizer
     if args.local_rank not in [-1, 0]:
-        # Make sure only the first process in distributed training will download model & vocab
+        # Make s1ure only the first process in distributed training will download model & vocab
         torch.distributed.barrier()
+
+    if args.cache_dir is None and 'HOME' in os.environ:
+        args.cache_dir = os.path.join(
+            os.environ['HOME'], '.cache', 'huggingface', 'transformers')
+        logger.info(f'--cache_dir is not specified. Setting it to "args.cache_dir".')
 
     args.model_type = args.model_type.lower()
     config = AutoConfig.from_pretrained(
         args.config_name if args.config_name else args.model_name_or_path,
-        cache_dir=args.cache_dir if args.cache_dir else None,
+        cache_dir=args.cache_dir,
     )
     tokenizer = AutoTokenizer.from_pretrained(
         args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
         do_lower_case=args.do_lower_case,
-        cache_dir=args.cache_dir if args.cache_dir else None,
+        cache_dir=args.cache_dir,
         use_fast=False
     )
     model = BertForIdentificationClassification.from_pretrained(
         args.model_name_or_path,
         from_tf=bool(".ckpt" in args.model_name_or_path),
         config=config,
-        cache_dir=args.cache_dir if args.cache_dir else None,
+        cache_dir=args.cache_dir,
     )
 
     if args.local_rank == 0:
