@@ -26,12 +26,14 @@ class BertForIdentificationClassification(BertPreTrainedModel):
 
     IMPOSSIBLE_STRATEGIES = {'ignore', 'label', 'not_mentioned'}
 
-    def __init__(self, config, impossible_strategy: str = 'ignore'):
+    def __init__(self, config, model_type: str, impossible_strategy: str = 'ignore'):
         super().__init__(config)
         self.bert = BertModel(config, add_pooling_layer=True)
         self.class_outputs = nn.Linear(config.hidden_size, 3)
         self.span_outputs = nn.Linear(config.hidden_size, 2)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
+
+        self.model_type: str = model_type
 
         if impossible_strategy not in self.IMPOSSIBLE_STRATEGIES:
             raise ValueError(

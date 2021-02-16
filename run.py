@@ -35,7 +35,7 @@ from transformers.trainer_utils import is_main_process
 from contract_nli.dataset.dataset import load_and_cache_examples
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification
-from contract_nli.trainer import train, evaluate
+from contract_nli.trainer import Trainer, evaluate, setup_optimizer
 from contract_nli.utils import set_seed
 
 logger = logging.getLogger(__name__)
@@ -92,9 +92,12 @@ def main():
     )
     parser.add_argument(
         "--cache_dir",
-        default=None,
+        default=(
+            os.path.join(os.environ['HOME'], '.cache', 'huggingface', 'transformers')
+            if 'HOME' in os.environ else None
+        ),
         type=str,
-        help="Where do you want to store the pre-trained models downloaded from s3",
+        help="Where do you want to store the pre-trained models downloaded from s3"
     )
     parser.add_argument(
         "--max_seq_length",
@@ -190,7 +193,7 @@ def main():
     args = parser.parse_args()
 
     if args.doc_stride >= args.max_seq_length - args.max_query_length:
-        logger.warning(
+        raise RuntimeError(
             "WARNING - You've set a doc stride which may be superior to the document length in some "
             "examples. This could result in errors when building features from the examples. Please reduce the doc "
             "stride or increase the maximum length to ensure the features are correctly built."
@@ -220,13 +223,12 @@ def main():
     # Setup CUDA, GPU & distributed training
     if args.local_rank == -1 or args.no_cuda:
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
-        args.n_gpu = 0 if args.no_cuda else torch.cuda.device_count()
+        n_gpu = 0 if args.no_cuda else torch.cuda.device_count()
     else:  # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         torch.cuda.set_device(args.local_rank)
         device = torch.device("cuda", args.local_rank)
         torch.distributed.init_process_group(backend="nccl")
-        args.n_gpu = 1
-    args.device = device
+        n_gpu = 1
 
     # Setup logging
     logging.basicConfig(
@@ -255,12 +257,7 @@ def main():
         # Make s1ure only the first process in distributed training will download model & vocab
         torch.distributed.barrier()
 
-    if args.cache_dir is None and 'HOME' in os.environ:
-        args.cache_dir = os.path.join(
-            os.environ['HOME'], '.cache', 'huggingface', 'transformers')
-        logger.info(f'--cache_dir is not specified. Setting it to "args.cache_dir".')
-
-    args.model_type = args.model_type.lower()
+    model_type = args.model_type.lower()
     config = AutoConfig.from_pretrained(
         args.config_name if args.config_name else args.model_name_or_path,
         cache_dir=args.cache_dir,
@@ -292,16 +289,36 @@ def main():
     if args.fp16:
         try:
             import apex
-
             apex.amp.register_half_function(torch, "einsum")
         except ImportError:
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
 
-    # Training
     if args.train_file is not None:
         train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False)[0]
-        global_step, tr_loss = train(args, train_dataset, model, tokenizer)
-        logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+        optimizer = setup_optimizer(
+            model, learning_rate=args.learning_rate, epsilon=args.epsilon,
+            weight_decay=args.weight_decay)
+        trainer = Trainer(
+            model=model,
+            train_dataset=train_dataset,
+            optimizer=optimizer,
+            output_dir=args.output_dir,
+            per_gpu_train_batch_size=args.per_gpu_train_batch_size,
+            num_epochs=args.num_epochs,
+            max_steps=args.max_steps,
+            dev_dataset=None,
+            logging_steps=args.logging_steps,
+            per_gpu_dev_batch_size=args.per_gpu_dev_batch_size,
+            gradient_accumulation_steps=args.gradient_accumulation_steps,
+            warmup_steps=args.warmup_steps,
+            max_grad_norm=args.max_grad_norm,
+            n_gpu=n_gpu,
+            local_rank=args.local_rank,
+            fp16=args.fp16,
+            fp16_opt_level=args.fp16_opt_level,
+            device=device,
+            save_steps=args.save_steps)
+        trainer.train()
 
     # Save the trained model and the tokenizer
     if args.train_file is not None and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
