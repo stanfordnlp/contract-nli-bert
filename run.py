@@ -20,6 +20,7 @@ import logging
 import os
 import random
 import timeit
+from typing import List, Tuple
 
 import numpy as np
 import torch
@@ -43,7 +44,7 @@ from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification, IdentificationClassificationModelOutput
 from contract_nli.postprocess import IdentificationClassificationPartialResult, \
-    compute_predictions_logits
+    compute_predictions_logits, IdentificationClassificationResult
 
 logger = logging.getLogger(__name__)
 
@@ -228,7 +229,7 @@ def train(args, train_dataset, model, tokenizer):
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                     # Only evaluate when single GPU otherwise metrics may not average well
                     if args.local_rank == -1 and args.evaluate_during_training:
-                        results = evaluate(args, model, tokenizer)
+                        results, _ = evaluate(args, model, tokenizer)
                         tb_writer.add_scalar(
                             "eval_class_accuracy",
                             results['micro_label_micro_doc']['class']['accuracy'], global_step)
@@ -276,7 +277,7 @@ def train(args, train_dataset, model, tokenizer):
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, prefix=""):
+def evaluate(args, model, tokenizer) -> Tuple[dict, List[IdentificationClassificationResult]]:
     dataset, examples, features = load_and_cache_examples(
         args, tokenizer, evaluate=True)
 
@@ -293,7 +294,7 @@ def evaluate(args, model, tokenizer, prefix=""):
     if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
         model = torch.nn.DataParallel(model)
 
-    logger.info("***** Running evaluation {} *****".format(prefix))
+    logger.info("***** Running evaluation *****")
     logger.info("  Num examples = %d", len(dataset))
     logger.info("  Batch size = %d", args.eval_batch_size)
 
@@ -365,7 +366,7 @@ def evaluate(args, model, tokenizer, prefix=""):
     results['loss_cls'] = float(accu_loss_cls / len(dataset))
     results['loss_span'] = float(accu_loss_span / len(dataset))
 
-    return results
+    return results, all_results
 
 
 def main():
@@ -685,10 +686,12 @@ def main():
             model = BertForIdentificationClassification.from_pretrained(checkpoint)  # , force_download=True)
             model.to(args.device)
 
-            result = evaluate(args, model, tokenizer, prefix=global_step)
-            logger.info(f"Results@{global_step}: {json.dumps(result, indent=2)}")
+            metrics, all_results = evaluate(args, model, tokenizer)
+            logger.info(f"Results@{global_step}: {json.dumps(metrics, indent=2)}")
+            with open(os.path.join(args.output_dir, f'metrics_{global_step}.json'), 'w') as fout:
+                json.dump(metrics, fout, indent=2)
             with open(os.path.join(args.output_dir, f'result_{global_step}.json'), 'w') as fout:
-                json.dump(result, fout, indent=2)
+                json.dump(all_results, fout, indent=2)
 
 
 
