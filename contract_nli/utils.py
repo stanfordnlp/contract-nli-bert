@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import random
+import contextlib
 
 import numpy as np
 import torch
@@ -27,3 +28,12 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+
+
+@contextlib.contextmanager
+def distributed_barrier(blocked: bool, enable: bool = True):
+    if enable and blocked:
+        torch.distributed.barrier()
+    yield
+    if enable and not blocked:
+        torch.distributed.barrier()

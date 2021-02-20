@@ -5,7 +5,7 @@ import numpy as np
 from scipy.special import softmax
 
 from contract_nli.dataset.encoder import IdentificationClassificationFeatures
-from contract_nli.dataset.loader import ContractNLIExample
+from contract_nli.dataset.loader import ContractNLIExample, NLILabel
 
 
 class IdentificationClassificationPartialResult:
@@ -61,3 +61,44 @@ def compute_predictions_logits(
             class_probs=class_probs
         ))
     return results
+
+
+def format_json(
+        all_examples: List[ContractNLIExample],
+        all_results: List[IdentificationClassificationResult]
+        ) -> List[dict]:
+
+    data_id_to_result = {}
+    for result in all_results:
+        data_id_to_result[result.data_id] = result
+
+    documents = dict()
+    for example_index, example in enumerate(all_examples):
+        if example.document_id not in documents:
+            documents[example.document_id] = {
+                'id': example.document_id,
+                'file_name': example.file_name,
+                'text': example.context_text,
+                'spans': example.spans,
+                'annotation_sets': [{
+                    'user': 'prediction',
+                    'mturk': False,
+                    'annotations': dict()
+                }]
+            }
+        assert len(example.spans) == len(example.splits)
+        prediction = data_id_to_result[example.data_id]
+        documents[example.document_id]['annotation_sets'][0]['annotations'][example.hypothesis_id] = {
+            'choice': NLILabel(np.argmax(prediction.class_probs)).to_anno_name(),
+            'spans': np.where(prediction.span_probs[:, 1] > 0.5)[0].tolist(),
+            'class_probs': {
+                NLILabel(i).to_anno_name(): float(p)
+                for i, p in enumerate(prediction.class_probs)
+            },
+            'span_probs': prediction.span_probs[:, 1].tolist()
+        }
+    all_hypothesis_ids = [
+        tuple(sorted(document['annotation_sets'][0]['annotations'].keys()))
+        for document in documents.values()]
+    assert len(set(all_hypothesis_ids)) == 1
+    return sorted(documents.values(), key=lambda d: d['id'])

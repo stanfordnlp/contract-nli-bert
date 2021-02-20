@@ -20,28 +20,19 @@ import glob
 import json
 import logging
 import os
-import timeit
-from typing import List, Tuple, Optional
+from typing import Optional
 
 import torch
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
+from torch.utils.data import DataLoader, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 from transformers import AdamW, get_linear_schedule_with_warmup
 
-from contract_nli.dataset.dataset import load_and_cache_examples
-from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     IdentificationClassificationModelOutput
-from contract_nli.postprocess import IdentificationClassificationPartialResult, \
-    compute_predictions_logits, IdentificationClassificationResult
 from contract_nli.summary_writer import SummaryWriter
 
 logger = logging.getLogger(__name__)
-
-
-def to_list(tensor):
-    return tensor.detach().cpu().tolist()
 
 
 def setup_optimizer(model, learning_rate: float, epsilon: float, weight_decay: float):
@@ -62,7 +53,7 @@ def setup_optimizer(model, learning_rate: float, epsilon: float, weight_decay: f
 
 class Trainer(object):
     def __init__(
-            self, model, train_dataset, optimizer, output_dir: str,
+            self, *, model, train_dataset, optimizer, output_dir: str,
             per_gpu_train_batch_size: int, num_epochs: Optional[int] = None, max_steps: Optional[int] = None,
             dev_dataset=None, logging_steps: Optional[int]=None, per_gpu_dev_batch_size: Optional[int]=None,
             gradient_accumulation_steps: int=1, warmup_steps: int=0, max_grad_norm: Optional[float]=None,
@@ -175,10 +166,13 @@ class Trainer(object):
             raise RuntimeError('Trainer must be deployed before training.')
 
         self.model.zero_grad()
-        while self.global_step < self.max_steps:
-            epoch_iterator = tqdm(
-                self.train_dataloader, desc="Iteration", disable=self.is_top)
-            for step, batch in enumerate(epoch_iterator):
+        pbar = tqdm(
+            total=int(self.max_steps), initial=self.global_step,
+            desc=f"Train (epoch {self.current_epoch})", disable=not self.is_top
+        )
+        while self.global_step <= self.max_steps:
+            pbar.set_description(desc=f"Train (epoch {self.current_epoch})")
+            for step, batch in enumerate(self.train_dataloader):
                 # Skip past any already trained steps if resuming training
                 if (step // self.gradient_accumulation_steps) < self.current_step:
                     continue
@@ -208,24 +202,25 @@ class Trainer(object):
                     self.model.zero_grad()
                     self.tb_writer.write(self.global_step)
                     self.global_step += 1
+                    pbar.update()
 
-                # Log metrics
-                if self.is_top and self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
-                    # Only evaluate when single GPU otherwise metrics may not average well
-                    if self.local_rank == -1:
-                        self.evaluate()
+                    # Log metrics
+                    if self.is_top and self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
+                        # Only evaluate when single GPU otherwise metrics may not average well
+                        if self.local_rank == -1:
+                            self.evaluate()
 
-                # Save model checkpoint
-                if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
-                    self.save()
+                    # Save model checkpoint
+                    if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
+                        self.save()
 
                 if self.global_step > self.max_steps:
-                    epoch_iterator.close()
                     break
+        pbar.close()
 
     def evaluate(self):
         epoch_iterator = tqdm(
-            self.dev_dataloader, desc="Iteration (dev)", disable=self.is_top)
+            self.dev_dataloader, desc="Iteration (dev)", disable=not self.is_top)
         self.tb_writer.clear()
         for step, batch in enumerate(epoch_iterator):
             self.run_batch(batch, train=False)
@@ -243,17 +238,17 @@ class Trainer(object):
             "input_ids": batch[0],
             "attention_mask": batch[1],
             "token_type_ids": batch[2],
-            "class_labels": batch[3],
-            "span_labels": batch[4],
-            "p_mask": batch[6],
-            "is_impossible": batch[7]
+            "p_mask": batch[4],
+            "is_impossible": batch[5],
+            "class_labels": batch[7],
+            "span_labels": batch[8]
         }
 
         if self.model.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
             del inputs["token_type_ids"]
 
         if self.model.model_type in ["xlnet", "xlm"]:
-            inputs.update({"cls_index": batch[5]})
+            inputs.update({"cls_index": batch[3]})
             # FIXME: Add lang_id to dataset
             if hasattr(self.model, "config") and hasattr(self.model.config, "lang2id"):
                 inputs.update(
@@ -270,10 +265,10 @@ class Trainer(object):
             loss_span = loss_span.mean()
 
         prefix = 'train' if train else 'eval'
-        self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_lr()[0])
-        self.tb_writer.add_scalar(f"{prefix}/loss", loss)
-        self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls)
-        self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span)
+        self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_last_lr()[0])
+        self.tb_writer.add_scalar(f"{prefix}/loss", loss.item())
+        self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
+        self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
 
         return loss
 
@@ -308,96 +303,3 @@ class Trainer(object):
         self.optimizer.load_state_dict(torch.load(os.path.join(checkpoint_dir, "optimizer.pt")))
         self.scheduler.load_state_dict(torch.load(os.path.join(checkpoint_dir, "scheduler.pt")))
         logger.info(f'Loaded Trainer from global_step of {self.global_step}')
-
-
-def evaluate(args, model, tokenizer) -> Tuple[dict, List[IdentificationClassificationResult]]:
-    dataset, examples, features = load_and_cache_examples(
-        args, tokenizer, evaluate=True)
-
-    if not os.path.exists(args.output_dir) and args.local_rank in [-1, 0]:
-        os.makedirs(args.output_dir)
-
-    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
-
-    # Note that DistributedSampler samples randomly
-    eval_sampler = SequentialSampler(dataset)
-    eval_dataloader = DataLoader(dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
-
-    # multi-gpu evaluate
-    if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
-        model = torch.nn.DataParallel(model)
-
-    logger.info("***** Running evaluation *****")
-    logger.info("  Num examples = %d", len(dataset))
-    logger.info("  Batch size = %d", args.eval_batch_size)
-
-    all_results = []
-    start_time = timeit.default_timer()
-    accu_loss, accu_loss_cls, accu_loss_span = 0.0, 0.0, 0.0
-    for batch in tqdm(eval_dataloader, desc="Evaluating"):
-        model.eval()
-        batch = tuple(t.to(args.device) for t in batch)
-
-        with torch.no_grad():
-            inputs = {
-                "input_ids": batch[0],
-                "attention_mask": batch[1],
-                "token_type_ids": batch[2],
-                "class_labels": batch[3],
-                "span_labels": batch[4],
-                "p_mask": batch[6],
-                "is_impossible": batch[7]
-            }
-            if args.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
-                del inputs["token_type_ids"]
-
-            feature_indices = batch[8]
-
-            # XLNet and XLM use more arguments for their predictions
-            if args.model_type in ["xlnet", "xlm"]:
-                inputs.update({"cls_index": batch[5]})
-                # for lang_id-sensitive xlm models
-                if hasattr(model, "config") and hasattr(model.config, "lang2id"):
-                    inputs.update(
-                        {"langs": (torch.ones(batch[0].shape, dtype=torch.int64) * args.lang_id).to(args.device)}
-                    )
-            outputs: IdentificationClassificationModelOutput = model(**inputs)
-
-            loss, loss_cls, loss_span = outputs.loss, outputs.loss_cls, outputs.loss_span
-            if args.n_gpu > 1:
-                loss = loss.sum()  # mean() to average on multi-gpu parallel (not distributed) training
-                loss_cls = loss_cls.sum()
-                loss_span = loss_span.sum()
-
-            accu_loss += loss.item() * len(batch[0])
-            accu_loss_cls += loss_cls.item() * len(batch[0])
-            accu_loss_span += loss_span.item() * len(batch[0])
-
-        for i, feature_index in enumerate(feature_indices):
-            eval_feature = features[feature_index.item()]
-            unique_id = int(eval_feature.unique_id)
-
-            class_logits = to_list(outputs.class_logits[i])
-            span_logits = to_list(outputs.span_logits[i])
-            result = IdentificationClassificationPartialResult(
-                unique_id, class_logits, span_logits)
-
-            all_results.append(result)
-
-    evalTime = timeit.default_timer() - start_time
-    logger.info("  Evaluation done in total %f secs (%f sec per example)", evalTime, evalTime / len(dataset))
-
-    all_results = compute_predictions_logits(
-        examples,
-        features,
-        all_results
-    )
-
-    # Compute the F1 and exact scores.
-    results = evaluate_all(examples, all_results, [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
-    results['loss'] = float(accu_loss / len(dataset))
-    results['loss_cls'] = float(accu_loss_cls / len(dataset))
-    results['loss_span'] = float(accu_loss_span / len(dataset))
-
-    return results, all_results
-

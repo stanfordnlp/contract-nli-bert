@@ -20,7 +20,7 @@
 import json
 import logging
 import os
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 import torch
 from torch.utils.data import TensorDataset
@@ -33,24 +33,23 @@ logger = logging.getLogger(__name__)
 
 
 
-def load_and_cache_examples(args, tokenizer, evaluate=False
-                            ) -> Tuple[TensorDataset, List[ContractNLIExample], List[IdentificationClassificationFeatures]]:
-    if args.local_rank not in [-1, 0] and not evaluate:
-        # Make sure only the first process in distributed training process the dataset, and the others will use the cache
-        torch.distributed.barrier()
-
-    # Load data features from cache or dataset file
-    cached_features_file = os.path.join(
-        ".",
-        "cached_{}_{}_{}".format(
-            "dev" if evaluate else "train",
-            list(filter(None, args.model_name_or_path.split("/"))).pop(),
-            str(args.max_seq_length),
-        ),
-    )
+def load_and_cache_examples(
+        path: str, tokenizer, *, max_seq_length: int, doc_stride: int,
+        max_query_length: int, threads: Optional[int] = 1, local_rank: int = 1,
+        overwrite_cache = False, labels_available=True, cache_dir: str = '.'
+        ) -> Tuple[TensorDataset, List[ContractNLIExample], List[IdentificationClassificationFeatures]]:
+    try:
+        os.makedirs(cache_dir)
+    except OSError:
+        pass
+    filename = os.path.splitext(os.path.basename(path))[0]
+    cachename = f'cached_{filename}_{max_seq_length}_{max_query_length}_{doc_stride}'
+    if not labels_available:
+        cachename += '_nolabels'
+    cached_features_file = os.path.join(cache_dir, cachename)
 
     # Init features and dataset from cache if it exists
-    if os.path.exists(cached_features_file) and not args.overwrite_cache:
+    if os.path.exists(cached_features_file) and not overwrite_cache:
         logger.info("Loading features from cached file %s", cached_features_file)
         features_and_dataset = torch.load(cached_features_file)
         features, dataset, examples = (
@@ -59,28 +58,23 @@ def load_and_cache_examples(args, tokenizer, evaluate=False
             features_and_dataset["examples"],
         )
     else:
-        input_file = args.predict_file if evaluate else args.train_file
-        logger.info("Creating features from dataset file at %s", input_file)
-        with open(input_file) as fin:
+        assert local_rank in [-1, 0]
+        logger.info(f"Creating features from dataset file at {path}")
+        with open(path) as fin:
             input_dict = json.load(fin)
         examples = ContractNLIExample.load(input_dict)
 
         features, dataset = convert_examples_to_features(
             examples=examples,
             tokenizer=tokenizer,
-            max_seq_length=args.max_seq_length,
-            doc_stride=args.doc_stride,
-            max_query_length=args.max_query_length,
-            is_training=True,  # FIXME: stop using hard-coded option to force training
-            threads=args.threads,
+            max_seq_length=max_seq_length,
+            doc_stride=doc_stride,
+            max_query_length=max_query_length,
+            labels_available=labels_available,
+            threads=threads
         )
 
-        if args.local_rank in [-1, 0]:
-            logger.info("Saving features into cached file %s", cached_features_file)
-            torch.save({"features": features, "dataset": dataset, "examples": examples}, cached_features_file)
-
-    if args.local_rank == 0 and not evaluate:
-        # Make sure only the first process in distributed training process the dataset, and the others will use the cache
-        torch.distributed.barrier()
+        logger.info("Saving features into cached file %s", cached_features_file)
+        torch.save({"features": features, "dataset": dataset, "examples": examples}, cached_features_file)
 
     return dataset, examples, features

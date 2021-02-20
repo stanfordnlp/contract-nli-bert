@@ -4,3 +4,5 @@ tqdm==4.56.1
 transformers==4.3.2
 tensorboard==2.4.1
 scikit-learn==0.24.1
+PyYAML==5.4.1
+click==7.1.2

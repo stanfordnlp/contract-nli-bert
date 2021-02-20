@@ -12,6 +12,22 @@ from contract_nli.dataset.loader import NLILabel
 logger = logging.get_logger(__name__)
 
 
+def update_config(config, *, impossible_strategy):
+
+    class IdentificationClassificationConfig(type(config)):
+        def __init__(self, impossible_strategy='ignore', **kwargs):
+            super().__init__(**kwargs)
+            self.impossible_strategy = impossible_strategy
+
+        @classmethod
+        def from_config(cls, config, *, impossible_strategy):
+            kwargs = config.to_dict()
+            assert 'impossible_strategy' not in kwargs
+            kwargs['impossible_strategy'] = impossible_strategy
+            return cls(**kwargs)
+
+    return IdentificationClassificationConfig.from_config(config, impossible_strategy=impossible_strategy)
+
 
 @dataclass
 class IdentificationClassificationModelOutput(ModelOutput):
@@ -26,19 +42,19 @@ class BertForIdentificationClassification(BertPreTrainedModel):
 
     IMPOSSIBLE_STRATEGIES = {'ignore', 'label', 'not_mentioned'}
 
-    def __init__(self, config, model_type: str, impossible_strategy: str = 'ignore'):
+    def __init__(self, config):
         super().__init__(config)
         self.bert = BertModel(config, add_pooling_layer=True)
         self.class_outputs = nn.Linear(config.hidden_size, 3)
         self.span_outputs = nn.Linear(config.hidden_size, 2)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
-        self.model_type: str = model_type
+        self.model_type: str = config.model_type
 
-        if impossible_strategy not in self.IMPOSSIBLE_STRATEGIES:
+        if config.impossible_strategy not in self.IMPOSSIBLE_STRATEGIES:
             raise ValueError(
                 f'impossible_strategy must be one of {self.IMPOSSIBLE_STRATEGIES}')
-        self.impossible_strategy = impossible_strategy
+        self.impossible_strategy = config.impossible_strategy
 
         self.init_weights()
 

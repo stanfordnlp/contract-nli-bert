@@ -20,6 +20,16 @@ class NLILabel(enum.Enum):
         else:
             raise ValueError(f'Invalid input "{"s"}" to NLILabel.from_str.')
 
+    def to_anno_name(self):
+        if self == NLILabel.NOT_MENTIONED:
+            return 'na'
+        elif self == NLILabel.ENTAILMENT:
+            return 'true'
+        elif self == NLILabel.CONTRADICTION:
+            return 'false'
+        else:
+            assert not 'Should not get here'
+
 
 class ContractNLIExample:
     """
@@ -35,23 +45,32 @@ class ContractNLIExample:
 
     def __init__(
         self,
+        *,
         data_id,
+        document_id,
+        hypothesis_id,
+        file_name,
         hypothesis_text,
         hypothesis_tokens,
         context_text,
         tokens,
         splits,
+        spans,
         char_to_word_offset,
         label,
         annotated_spans,
     ):
         self.data_id: str = data_id
+        self.document_id: str = document_id
+        self.hypothesis_id: str = hypothesis_id
+        self.file_name: str = file_name
         self.hypothesis_text: str = hypothesis_text
         self.hypothesis_tokens: List[str] = hypothesis_tokens
         self.context_text: str = context_text
         self.tokens: List[str] = tokens
         # Note that splits are NOT unique
         self.splits: List[int] = splits
+        self.spans: List[Tuple[int, int]] = spans
         self.char_to_word_offset: List[int] = char_to_word_offset
         self.label: NLILabel = label
         self.annotated_spans: List[int] = annotated_spans
@@ -105,14 +124,18 @@ class ContractNLIExample:
                     context_text, document['spans'])
                 hypothesis_tokens, _, _ = cls.tokenize_and_align(
                     hypothesis_text, [])
-
+                assert len(splits) == len(document['spans'])
                 example = cls(
                     data_id=data_id,
+                    document_id=document["id"],
+                    hypothesis_id=label_id,
+                    file_name=document['file_name'],
                     hypothesis_text=hypothesis_text,
                     hypothesis_tokens=hypothesis_tokens,
                     context_text=context_text,
                     tokens=tokens,
                     splits=splits,
+                    spans=document['spans'],
                     char_to_word_offset=char_to_word_offset,
                     label=NLILabel.from_str(annotation['choice']),
                     annotated_spans=annotation['spans'],

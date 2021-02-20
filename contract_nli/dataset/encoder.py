@@ -170,7 +170,7 @@ def convert_example_to_features(
         doc_stride: int,
         max_query_length: int,
         padding_strategy,
-        is_training: bool
+        labels_available: bool
         ) -> List[IdentificationClassificationFeatures]:
     features = []
 
@@ -303,7 +303,7 @@ def convert_example_to_features(
 
         span_is_impossible = example.is_impossible
         span_labels = np.zeros_like(span["input_ids"])
-        if is_training:
+        if labels_available:
             if not span_is_impossible:
                 doc_start = span["start"]
                 doc_end = span["start"] + span["paragraph_len"]
@@ -361,9 +361,9 @@ def convert_examples_to_features(
     max_seq_length,
     doc_stride,
     max_query_length,
-    is_training,
+    labels_available,
     padding_strategy="max_length",
-    threads=1,
+    threads=None,
     tqdm_enabled=True,
 ):
     """
@@ -376,11 +376,14 @@ def convert_examples_to_features(
         max_seq_length: The maximum sequence length of the inputs.
         doc_stride: The stride used when the context is too large and is split across several features.
         max_query_length: The maximum length of the query.
-        is_training: whether to create features for model evaluation or model training.
+        labels_available: whether to create features for model evaluation or model training.
         padding_strategy: Default to "max_length". Which padding strategy to use
         threads: multiple processing threads.
     """
-    threads = min(threads, cpu_count())
+    if threads is None or threads < 0:
+        threads = cpu_count()
+    else:
+        threads = min(threads, cpu_count())
     with Pool(threads, initializer=convert_example_to_features_init, initargs=(tokenizer,)) as p:
         annotate_ = partial(
             convert_example_to_features,
@@ -388,7 +391,7 @@ def convert_examples_to_features(
             doc_stride=doc_stride,
             max_query_length=max_query_length,
             padding_strategy=padding_strategy,
-            is_training=is_training,
+            labels_available=labels_available
         )
         features: List[IdentificationClassificationFeatures] = list(
             tqdm(
@@ -424,25 +427,23 @@ def convert_examples_to_features(
     all_is_impossible = torch.tensor([f.is_impossible for f in features], dtype=torch.float)
 
     all_feature_index = torch.arange(all_input_ids.size(0), dtype=torch.long)
-    if not is_training:
-        dataset = TensorDataset(
-            all_input_ids, all_attention_masks, all_token_type_ids, all_cls_index, all_p_mask, all_feature_index
-        )
-    else:
+    dataset = [
+        all_input_ids,
+        all_attention_masks,
+        all_token_type_ids,
+        all_cls_index,
+        all_p_mask,
+        all_is_impossible,
+        all_feature_index
+    ]
+    if labels_available:
         all_class_label = torch.tensor(
             [f.class_label for f in features], dtype=torch.long)
         all_span_labels = torch.tensor(
             [f.span_labels for f in features], dtype=torch.long)
-        dataset = TensorDataset(
-            all_input_ids,
-            all_attention_masks,
-            all_token_type_ids,
+        dataset += [
             all_class_label,
             all_span_labels,
-            all_cls_index,
-            all_p_mask,
-            all_is_impossible,
-            all_feature_index
-        )
-
+        ]
+    dataset = TensorDataset(*dataset)
     return features, dataset
