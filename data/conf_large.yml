@@ -1,0 +1,82 @@
+# Path to pretrained model or model identifier from huggingface.co/models
+model_name_or_path: "bert-large-uncased-whole-word-masking"
+
+
+train_file: "./data/train.json"
+
+dev_file: "./data/dev.json"
+
+# Pretrained config name or path if not the same as model_name
+config_name: null
+
+# Pretrained tokenizer name or path if not the same as model_name
+tokenizer_name: null
+
+# Directory to save downloaded pretrained model
+# Default to ~/.cache/huggingface/transformers
+cache_dir: null
+
+# The maximum total input sequence length.
+# Sequence longer max_seq_length will be splitted into different chunks.
+max_seq_length: 512
+
+# How many tokens should the first span have in each chunk.
+# Note that it may not be honored when the span is too long.
+doc_stride: 64
+
+# The maximum number of tokens for the hypothesis.
+# Hypotheses longer than this will be truncated.
+max_query_length: 256
+
+# Set this flag if you are using an uncased model.
+do_lower_case: true
+
+per_gpu_train_batch_size: 1
+
+per_gpu_eval_batch_size: 1
+
+learning_rate: !!float 3e-5
+
+# Number of updates steps to accumulate before performing a backward/update pass.
+gradient_accumulation_steps: 3
+
+weight_decay: 0.0
+
+adam_epsilon: !!float 1e-8
+
+max_grad_norm: 1.0
+
+num_epochs: 2.0
+
+# If set, total number of training steps to perform. Conflicts with num_epochs.
+max_steps: null
+
+# Linear warmup over warmup_steps
+warmup_steps: 0
+
+# language id of input for language-specific xlm models (see tokenization_xlm.PRETRAINED_INIT_CONFIGURATION)
+lang_id: null
+
+# Validate every n steps
+logging_steps: 500
+
+# save model every n steps
+save_steps: 500
+
+seed: 42
+
+# Whether to use 16-bit (mixed) precision (through NVIDIA apex) instead of 32-bit
+fp16: false
+
+# For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3'].
+# See details at https://nvidia.github.io/apex/amp.html
+fp16_opt_level: "O1"
+
+# Make it true if you have a gpu but you don't want to use it
+no_cuda: false
+
+# Overwrite the cached training and evaluation sets
+overwrite_cache: false
+
+# Evaluate all checkpoints starting with the same prefix as model_name ending and ending with step number
+eval_all_checkpoints: false
