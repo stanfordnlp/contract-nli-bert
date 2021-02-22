@@ -171,6 +171,8 @@ class Trainer(object):
             desc=f"Train (epoch {self.current_epoch})", disable=not self.is_top
         )
         while self.global_step <= self.max_steps:
+            if self.local_rank != -1:
+                self.train_dataloader.sampler.set_epoch(self.current_epoch)
             pbar.set_description(desc=f"Train (epoch {self.current_epoch})")
             for step, batch in enumerate(self.train_dataloader):
                 # Skip past any already trained steps if resuming training
@@ -200,15 +202,13 @@ class Trainer(object):
                     self.optimizer.step()
                     self.scheduler.step()  # Update learning rate schedule
                     self.model.zero_grad()
-                    self.tb_writer.write(self.global_step)
+                    if self.is_top:
+                        self.tb_writer.write(self.global_step)
                     self.global_step += 1
                     pbar.update()
 
-                    # Log metrics
-                    if self.is_top and self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
-                        # Only evaluate when single GPU otherwise metrics may not average well
-                        if self.local_rank == -1:
-                            self.evaluate()
+                    if self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
+                        self.evaluate()
 
                     # Save model checkpoint
                     if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
@@ -221,10 +221,12 @@ class Trainer(object):
     def evaluate(self):
         epoch_iterator = tqdm(
             self.dev_dataloader, desc="Iteration (dev)", disable=not self.is_top)
-        self.tb_writer.clear()
-        for step, batch in enumerate(epoch_iterator):
+        if self.is_top:
+            self.tb_writer.clear()
+        for _, batch in enumerate(epoch_iterator):
             self.run_batch(batch, train=False)
-        self.tb_writer.write(self.global_step)
+        if self.is_top:
+            self.tb_writer.write(self.global_step)
 
     def run_batch(self, batch, train: bool):
         if train:
@@ -244,10 +246,11 @@ class Trainer(object):
             "span_labels": batch[8]
         }
 
-        if self.model.model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
+        model_type = self.model.module.model_type if hasattr(self.model, "module") else self.model.model_type
+        if model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
             del inputs["token_type_ids"]
 
-        if self.model.model_type in ["xlnet", "xlm"]:
+        if model_type in ["xlnet", "xlm"]:
             inputs.update({"cls_index": batch[3]})
             # FIXME: Add lang_id to dataset
             if hasattr(self.model, "config") and hasattr(self.model.config, "lang2id"):
@@ -264,11 +267,12 @@ class Trainer(object):
             loss_cls = loss_cls.mean()
             loss_span = loss_span.mean()
 
-        prefix = 'train' if train else 'eval'
-        self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_last_lr()[0])
-        self.tb_writer.add_scalar(f"{prefix}/loss", loss.item())
-        self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
-        self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
+        if self.is_top:
+            prefix = 'train' if train else 'eval'
+            self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_last_lr()[0])
+            self.tb_writer.add_scalar(f"{prefix}/loss", loss.item())
+            self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
+            self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
 
         return loss
 

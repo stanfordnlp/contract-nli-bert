@@ -50,13 +50,6 @@ logger = logging.getLogger(__name__)
 def main(conf, output_dir, local_rank, shared_filesystem):
     conf: dict = load_conf(conf)
 
-    # if this is a main process in a node
-    local_main = is_main_process(local_rank)
-    # if this is a main process in the whole distributed training
-    all_main = local_rank == -1 or torch.distributed.get_rank() == 0
-    # if this is a main process on a filesystem
-    fs_main = (shared_filesystem and all_main) or ((not shared_filesystem) and local_main)
-
     # Setup CUDA, GPU & distributed training
     if local_rank == -1 or conf['no_cuda']:
         device = torch.device("cuda" if torch.cuda.is_available() and not conf['no_cuda'] else "cpu")
@@ -66,6 +59,13 @@ def main(conf, output_dir, local_rank, shared_filesystem):
         device = torch.device("cuda", local_rank)
         torch.distributed.init_process_group(backend="nccl")
         n_gpu = 1
+
+    # if this is a main process in a node
+    local_main = is_main_process(local_rank)
+    # if this is a main process in the whole distributed training
+    all_main = local_rank == -1 or torch.distributed.get_rank() == 0
+    # if this is a main process on a filesystem
+    fs_main = (shared_filesystem and all_main) or ((not shared_filesystem) and local_main)
 
     # Setup logging
     logging.basicConfig(
