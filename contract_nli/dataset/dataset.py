@@ -43,7 +43,8 @@ def load_and_cache_examples(
     except OSError:
         pass
     filename = os.path.splitext(os.path.basename(path))[0]
-    cachename = f'cached_{filename}_{max_seq_length}_{max_query_length}_{doc_stride}'
+    tokenizer_name = os.path.splitext(os.path.split(tokenizer.name_or_path)[-1])[0]
+    cachename = f'cached_{filename}_{tokenizer_name}_{max_seq_length}_{max_query_length}_{doc_stride}'
     if not labels_available:
         cachename += '_nolabels'
     cached_features_file = os.path.join(cache_dir, cachename)
