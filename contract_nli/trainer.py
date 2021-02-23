@@ -215,9 +215,9 @@ class Trainer(object):
                         loss = self.evaluate()
                         if loss < self.best_loss:
                             self.best_loss = loss
-                            self.save(self.best_checkpoint_dir)
+                            if self.is_top:
+                                self.save(self.best_checkpoint_dir)
 
-                    # Save model checkpoint
                     if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
                         self.save()
 
