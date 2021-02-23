@@ -29,6 +29,7 @@ from transformers.trainer_utils import is_main_process
 
 from contract_nli.conf import load_conf
 from contract_nli.dataset.dataset import load_and_cache_examples
+from contract_nli.dataset.encoder import SPAN_TOKEN
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification, update_config
@@ -101,12 +102,25 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             cache_dir=conf['cache_dir'],
             use_fast=False
         )
+        n_added_token = tokenizer.add_special_tokens(
+            {'additional_special_tokens': [SPAN_TOKEN]})
+        if n_added_token == 0:
+            logger.warning(
+                f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
+                ' this warning if you are retraining a model from this train.py')
+        else:
+            span_token_id = tokenizer.additional_special_tokens_ids[
+                tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
+            logger.warning(
+                f'SPAN_TOKEN "{SPAN_TOKEN}" was added as "{span_token_id}". You can safely ignore'
+                ' this warning if you are training a model from pretrained LMs.')
         model = BertForIdentificationClassification.from_pretrained(
             conf['model_name_or_path'],
             from_tf=bool(".ckpt" in conf['model_name_or_path']),
             config=config,
             cache_dir=conf['cache_dir']
         )
+        model.resize_token_embeddings(len(tokenizer))
 
     model.to(device)
 

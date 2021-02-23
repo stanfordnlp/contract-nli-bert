@@ -32,6 +32,7 @@ from contract_nli.dataset.loader import ContractNLIExample
 
 # Store the tokenizers which insert 2 separators tokens
 MULTI_SEP_TOKENS_TOKENIZERS_SET = {"roberta", "camembert", "bart", "mpnet"}
+SPAN_TOKEN = '[SPAN]'
 
 
 logger = logging.get_logger(__name__)
@@ -144,8 +145,7 @@ def _tokenize(tokens: List[str], splits: List[int]):
         if i in tok_to_orig_span_index:
             span_to_orig_index[len(all_doc_tokens)] = tok_to_orig_span_index[i]
             tok_to_orig_index.append(-1)
-            # FIXME: do NOT use cls_token but add an additional_special_token
-            all_doc_tokens.append(tokenizer.cls_token)
+            all_doc_tokens.append(SPAN_TOKEN)
         orig_to_tok_index.append(len(all_doc_tokens))
         if tokenizer.__class__.__name__ in [
             "RobertaTokenizer",
@@ -293,13 +293,15 @@ def convert_example_to_features(
             )
             spans[doc_span_index]["token_is_max_context"][index] = is_max_context
 
+    span_token_id = tokenizer.additional_special_tokens_ids[tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
     for span in spans:
         # Identify the position of the CLS token
         cls_index = span["input_ids"].index(tokenizer.cls_token_id)
 
         # p_mask: mask with 1 for token than cannot be in the answer (0 for token which can be in an answer)
-        # Original TF implem also keep the classification token (set to 0)
-        p_mask = (np.array(span["input_ids"]) != tokenizer.cls_token_id).astype(np.int32)
+        p_mask = np.logical_not(
+            np.isin(np.array(span["input_ids"]), [span_token_id, tokenizer.cls_token_id])
+        ).astype(np.int32)
 
         span_is_impossible = example.is_impossible
         span_labels = np.zeros_like(span["input_ids"])
