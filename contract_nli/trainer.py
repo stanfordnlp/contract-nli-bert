@@ -174,7 +174,7 @@ class Trainer(object):
             total=int(self.max_steps), initial=self.global_step,
             desc=f"Train (epoch {self.current_epoch})", disable=not self.is_top
         )
-        while self.global_step <= self.max_steps:
+        while (self.global_step + 1) <= self.max_steps:
             if self.local_rank != -1:
                 self.train_dataloader.sampler.set_epoch(self.current_epoch)
             pbar.set_description(desc=f"Train (epoch {self.current_epoch})")
@@ -221,7 +221,7 @@ class Trainer(object):
                     if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
                         self.save()
 
-                if self.global_step > self.max_steps:
+                if (self.global_step + 1) >= self.max_steps:
                     break
         pbar.close()
 
@@ -334,4 +334,4 @@ class Trainer(object):
 
         self.deployed = False
 
-        logger.info(f'Loaded Trainer from global_step of {self.global_step}')
+        logger.info(f'Loaded Trainer from {checkpoint_dir}')
