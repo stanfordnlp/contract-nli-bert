@@ -25,7 +25,8 @@ class IdentificationClassificationResult:
 def compute_predictions_logits(
         all_examples: List[ContractNLIExample],
         all_features: List[IdentificationClassificationFeatures],
-        all_results: List[IdentificationClassificationPartialResult]
+        all_results: List[IdentificationClassificationPartialResult],
+        weight_class_probs_by_span_probs: bool
         ) -> List[IdentificationClassificationResult]:
     example_index_to_features = collections.defaultdict(list)
     for feature in all_features:
@@ -41,7 +42,8 @@ def compute_predictions_logits(
         assert len(features) > 0
         span_probs = np.zeros((len(example.splits), 2))
         num_pred_spans = np.zeros(len(example.splits))
-        class_probs = np.zeros(3)
+        ave_span_probs = []
+        class_probs = []
         for feature in features:
             result = unique_id_to_result[feature.unique_id]
             _span_probs = softmax(np.array(result.span_logits), axis=1)
@@ -49,11 +51,17 @@ def compute_predictions_logits(
                 for orig_span_idx in orig_span_indices:
                     span_probs[orig_span_idx] += _span_probs[tok_idx]
                     num_pred_spans[orig_span_idx] += 1
-            class_probs += softmax(result.class_logits)
+            ave_span_probs.append(np.mean(_span_probs[:, 1]))
+            class_probs.append(softmax(result.class_logits))
         assert np.all(num_pred_spans > 0)
         span_probs /= num_pred_spans[:, None]
         assert np.allclose(span_probs.sum(1), 1.0)
-        class_probs /= len(features)
+        if weight_class_probs_by_span_probs:
+            ave_span_probs = np.array(ave_span_probs)
+            weight = ave_span_probs / ave_span_probs.sum()
+            class_probs = (np.array(class_probs) * weight[:, None]).sum(0)
+        else:
+            class_probs = np.array(class_probs).mean(0)
         assert abs(1.0 - class_probs.sum()) < 0.001
         results.append(IdentificationClassificationResult(
             data_id=example.data_id,

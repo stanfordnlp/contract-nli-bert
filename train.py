@@ -231,7 +231,8 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             all_results = predict(
                 model, dev_dataset, dev_examples, dev_features,
                 per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
-                device=device, n_gpu=n_gpu)
+                device=device, n_gpu=n_gpu,
+                weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
             metrics = evaluate_all(dev_examples, all_results,
                                    [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
             logger.info(f"Results@{global_step}: {json.dumps(metrics, indent=2)}")

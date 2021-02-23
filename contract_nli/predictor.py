@@ -18,7 +18,8 @@ def to_list(tensor):
 
 
 def predict(model, dataset, examples, features, *, per_gpu_batch_size: int,
-            device, n_gpu: int) -> List[IdentificationClassificationResult]:
+            device, n_gpu: int, weight_class_probs_by_span_probs: bool
+            ) -> List[IdentificationClassificationResult]:
     # We do not implement this as a part of Trainer, because we want to run
     # inference without instanizing optimizers
     eval_batch_size = per_gpu_batch_size * max(1, n_gpu)
@@ -80,7 +81,8 @@ def predict(model, dataset, examples, features, *, per_gpu_batch_size: int,
     all_results = compute_predictions_logits(
         examples,
         features,
-        all_results
+        all_results,
+        weight_class_probs_by_span_probs=weight_class_probs_by_span_probs
     )
 
     return all_results

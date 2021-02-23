@@ -80,3 +80,5 @@ overwrite_cache: false
 
 # Evaluate all checkpoints starting with the same prefix as model_name ending and ending with step number
 eval_all_checkpoints: false
+
+weight_class_probs_by_span_probs: true
