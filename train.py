@@ -122,7 +122,6 @@ def main(conf, output_dir, local_rank, shared_filesystem):
         )
         model.resize_token_embeddings(len(tokenizer))
 
-    model.to(device)
 
     logger.info("Training/evaluation parameters %s",
                 {k: v for k, v in conf.items() if k != 'raw_yaml'})
@@ -192,55 +191,40 @@ def main(conf, output_dir, local_rank, shared_filesystem):
     trainer.deploy()
     trainer.train()
 
-    # Save the trained model and the tokenizer
-    if all_main:
-        logger.info("Saving model checkpoint to %s", output_dir)
-        # Save a trained model, configuration and tokenizer using `save_pretrained()`.
-        # They can then be reloaded using `from_pretrained()`
-        # Take care of distributed/parallel training
-        model_to_save = model.module if hasattr(model, "module") else model
-        model_to_save.save_pretrained(output_dir)
-        tokenizer.save_pretrained(output_dir)
+    # FIXME: Prediction using multiple GPUs
+    if not all_main:
+        return
 
-        with open(os.path.join(output_dir, "conf.yml"), 'w') as fout:
-            fout.write(conf['raw_yaml'])
+    if os.path.exists(trainer.best_checkpoint_dir):
+        logger.info(f"Loading best model from {trainer.best_checkpoint_dir}")
+        trainer.load(trainer.best_checkpoint_dir)
 
-        # Load a trained model and vocabulary that you have fine-tuned
-        model = BertForIdentificationClassification.from_pretrained(output_dir)
-        tokenizer = AutoTokenizer.from_pretrained(
-            output_dir, do_lower_case=conf['do_lower_case'], use_fast=False)
-        model.to(device)
+    logger.info("Saving model checkpoint to %s", output_dir)
+    # Save a trained model, configuration and tokenizer using `save_pretrained()`.
+    # They can then be reloaded using `from_pretrained()`
+    # Take care of distributed/parallel training
+    model_to_save = model.module if hasattr(model, "module") else model
+    model_to_save.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    with open(os.path.join(output_dir, "conf.yml"), 'w') as fout:
+        fout.write(conf['raw_yaml'])
 
-    # Evaluation - we can ask to evaluate all the checkpoints (sub-directories) in a directory
-    if all_main and dev_dataset is not None:
-        logger.info("Loading checkpoints saved during training for evaluation")
-        checkpoints = [output_dir]
-        if conf['eval_all_checkpoints']:
-            checkpoints = list(
-                os.path.dirname(c)
-                for c in sorted(glob.glob(output_dir + "/*/" + WEIGHTS_NAME))
-            )
-        logger.info("Evaluate the following checkpoints: %s", checkpoints)
+    if dev_dataset is not None:
+        logger.info("Evaluate the on validation data")
 
-        for checkpoint in checkpoints:
-            # Reload the model
-            global_step = checkpoint.split("-")[-1] if len(checkpoints) > 1 else ""
-            model = BertForIdentificationClassification.from_pretrained(checkpoint)
-            model.to(device)
-
-            all_results = predict(
-                model, dev_dataset, dev_examples, dev_features,
-                per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
-                device=device, n_gpu=n_gpu,
-                weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
-            metrics = evaluate_all(dev_examples, all_results,
-                                   [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
-            logger.info(f"Results@{global_step}: {json.dumps(metrics, indent=2)}")
-            with open(os.path.join(output_dir, f'metrics_{global_step}.json'), 'w') as fout:
-                json.dump(metrics, fout, indent=2)
-            result_json = format_json(dev_examples, all_results)
-            with open(os.path.join(output_dir, f'result_{global_step}.json'), 'w') as fout:
-                json.dump(result_json, fout, indent=2)
+        all_results = predict(
+            model, dev_dataset, dev_examples, dev_features,
+            per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+            device=device, n_gpu=n_gpu,
+            weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+        metrics = evaluate_all(dev_examples, all_results,
+                               [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
+        logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
+        with open(os.path.join(output_dir, f'metrics.json'), 'w') as fout:
+            json.dump(metrics, fout, indent=2)
+        result_json = format_json(dev_examples, all_results)
+        with open(os.path.join(output_dir, f'result.json'), 'w') as fout:
+            json.dump(result_json, fout, indent=2)
 
 
 if __name__ == "__main__":

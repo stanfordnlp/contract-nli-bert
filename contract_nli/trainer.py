@@ -22,6 +22,7 @@ import logging
 import os
 from typing import Optional
 
+import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
@@ -105,6 +106,7 @@ class Trainer(object):
         self.save_steps = save_steps
 
         self.global_step = 0
+        self.best_loss = np.inf
 
         self.deployed = False
 
@@ -118,6 +120,8 @@ class Trainer(object):
 
     def deploy(self):
         # This is not included in __init__ to allow loading Trainer
+        self.model.to(self.device)
+
         if self.fp16:
             try:
                 from apex import amp
@@ -208,7 +212,10 @@ class Trainer(object):
                     pbar.update()
 
                     if self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
-                        self.evaluate()
+                        loss = self.evaluate()
+                        if loss < self.best_loss:
+                            self.best_loss = loss
+                            self.save(self.best_checkpoint_dir)
 
                     # Save model checkpoint
                     if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
@@ -223,10 +230,13 @@ class Trainer(object):
             self.dev_dataloader, desc="Iteration (dev)", disable=not self.is_top)
         if self.is_top:
             self.tb_writer.clear()
+        losses = []
         for _, batch in enumerate(epoch_iterator):
-            self.run_batch(batch, train=False)
+            loss = self.run_batch(batch, train=False)
+            losses.append(loss.item())
         if self.is_top:
             self.tb_writer.write(self.global_step)
+        return np.mean(losses)
 
     def run_batch(self, batch, train: bool):
         if train:
@@ -276,11 +286,14 @@ class Trainer(object):
 
         return loss
 
-    def save(self):
-        checkpoint_dir = os.path.join(self.output_dir, f"checkpoint-{self.global_step}")
-        self._save(checkpoint_dir)
+    @property
+    def best_checkpoint_dir(self) -> str:
+        return os.path.join(self.output_dir, f"best-checkpoint")
 
-    def _save(self, checkpoint_dir):
+    def save(self, checkpoint_dir: Optional[str] = None):
+        if checkpoint_dir is None:
+            checkpoint_dir = os.path.join(
+                self.output_dir, f"checkpoint-{self.global_step}")
         # Take care of distributed/parallel training
         logger.info("Saving model checkpoint to %s", checkpoint_dir)
         model_to_save = self.model.module if hasattr(self.model, "module") else self.model
@@ -291,19 +304,34 @@ class Trainer(object):
 
         with open(os.path.join(checkpoint_dir, 'trainer_info.json'), 'w') as fout:
             json.dump({
-                'global_step': self.global_step
+                'global_step': self.global_step,
+                'best_loss': self.best_loss
             }, fout, indent=2)
         logger.info("Finished saving Trainer.")
 
     def resume(self, output_dir: str):
         checkpoint_dirs = glob.glob(os.path.join(output_dir, 'checkpoint-*'))
         checkpoint_dir = max(checkpoint_dirs, key=lambda d: int(d.split("-")[-1]))
-        self._load(checkpoint_dir)
+        self.load(checkpoint_dir)
 
-    def _load(self, checkpoint_dir):
+    def load(self, checkpoint_dir):
         with open(os.path.join(checkpoint_dir, 'trainer_info.json')) as fin:
             trainer_info = json.load(fin)
         self.global_step = trainer_info['global_step']
+        if not os.path.exists(self.best_checkpoint_dir) and trainer_info['best_loss'] != np.inf:
+            logger.warning(
+                f'Previous "best_loss" was {trainer_info["best_loss"]} but '
+                'the corresponding checkpoint was not found at '
+                f'{self.best_checkpoint_dir}. Resetting it to inf.')
+            self.best_loss = np.inf
+        else:
+            self.best_loss = trainer_info['best_loss']
         self.optimizer.load_state_dict(torch.load(os.path.join(checkpoint_dir, "optimizer.pt")))
         self.scheduler.load_state_dict(torch.load(os.path.join(checkpoint_dir, "scheduler.pt")))
+
+        # Load a trained model and vocabulary that you have fine-tuned
+        self.model = type(self.model).from_pretrained(checkpoint_dir)
+
+        self.deployed = False
+
         logger.info(f'Loaded Trainer from global_step of {self.global_step}')
