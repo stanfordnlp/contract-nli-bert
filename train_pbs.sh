@@ -51,8 +51,7 @@ cat <<'__EOF__' |
 #$ -l __RESOURCE__
 #$ -l h_rt=48:00:00
 #$ -j y
-
-set -eu
+#$ -o __PBS_LOG_PATH__
 
 source /etc/profile.d/modules.sh
 module load cuda/10.2/10.2.89 cudnn/7.6/7.6.5 nccl/2.6/2.6.4-1
@@ -63,6 +62,8 @@ export PATH="$PYENV_ROOT/bin:$PATH";
 export PYENV_ROOT="$HOME/.pyenv";
 eval "$(pyenv init -)";
 eval "$(pyenv virtualenv-init -)";
+
+set -eu
 
 cd __TMPDIR__/files
 export PYTHONPATH=`pwd`
@@ -83,8 +84,9 @@ mv ${logdir}/waiting ${logdir}/running
     printf "log file: $logfile\n"
     printf "COMMAND: __COMMAND__ $logdir"
     printf '\n\n\n\n\n\n\n-----------------------------\n\n'
-    __COMMAND__ $logdir
 } 2>&1 >> $logfile
+
+__COMMAND__ $logdir 2>&1 >> $logfile
 
 mv ${logdir}/running ${logdir}/succeeded
 
@@ -95,6 +97,7 @@ sed -e "s|__COMMAND__|$COMMAND|g" \
     -e "s|__LOGDIR__|${logdir}|g" \
     -e "s|__TMPDIR__|${tmppath}|g" \
     -e "s|__RESOURCE__|${RESOURCE}|g" \
+    -e "s|__PBS_LOG_PATH__|${tmppath}/pbs.log|g" \
     > $tmppath/command.pbs
 printf "Making temporary qsub script to ${tmppath}/command.pbs\n"
 printf "Logging to $logdir with JOB id t${date_id}\n"
