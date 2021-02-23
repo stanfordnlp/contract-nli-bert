@@ -97,7 +97,7 @@ sed -e "s|__COMMAND__|$COMMAND|g" \
     -e "s|__LOGDIR__|${logdir}|g" \
     -e "s|__TMPDIR__|${tmppath}|g" \
     -e "s|__RESOURCE__|${RESOURCE}|g" \
-    -e "s|__PBS_LOG_PATH__|${tmppath}/pbs.log|g" \
+    -e "s|__PBS_LOG_PATH__|${logdir}/pbs.log|g" \
     > $tmppath/command.pbs
 printf "Making temporary qsub script to ${tmppath}/command.pbs\n"
 printf "Logging to $logdir with JOB id t${date_id}\n"
