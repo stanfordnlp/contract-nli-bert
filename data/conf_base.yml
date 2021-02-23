@@ -79,3 +79,6 @@ no_cuda: false
 overwrite_cache: false
 
 weight_class_probs_by_span_probs: true
+
+# class loss is multiplied by this value
+class_loss_weight: 0.1

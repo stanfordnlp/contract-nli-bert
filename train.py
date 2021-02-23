@@ -95,7 +95,9 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             conf['config_name'] if conf['config_name'] else conf['model_name_or_path'],
             cache_dir=conf['cache_dir']
         )
-        config = update_config(config, impossible_strategy='ignore')
+        config = update_config(
+            config, impossible_strategy='ignore',
+            class_loss_weight=conf['class_loss_weight'])
         tokenizer = AutoTokenizer.from_pretrained(
             conf['tokenizer_name'] if conf['tokenizer_name'] else conf['model_name_or_path'],
             do_lower_case=conf['do_lower_case'],

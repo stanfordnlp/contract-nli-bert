@@ -12,21 +12,26 @@ from contract_nli.dataset.loader import NLILabel
 logger = logging.get_logger(__name__)
 
 
-def update_config(config, *, impossible_strategy):
+def update_config(config, *, impossible_strategy, class_loss_weight):
 
     class IdentificationClassificationConfig(type(config)):
-        def __init__(self, impossible_strategy='ignore', **kwargs):
+        def __init__(self, impossible_strategy='ignore', class_loss_weight= 1.0, **kwargs):
             super().__init__(**kwargs)
             self.impossible_strategy = impossible_strategy
+            self.class_loss_weight = class_loss_weight
 
         @classmethod
-        def from_config(cls, config, *, impossible_strategy):
+        def from_config(cls, config, *, impossible_strategy, class_loss_weight):
             kwargs = config.to_dict()
             assert 'impossible_strategy' not in kwargs
             kwargs['impossible_strategy'] = impossible_strategy
+            assert 'class_loss_weight' not in kwargs
+            kwargs['class_loss_weight'] = class_loss_weight
             return cls(**kwargs)
 
-    return IdentificationClassificationConfig.from_config(config, impossible_strategy=impossible_strategy)
+    return IdentificationClassificationConfig.from_config(
+        config, impossible_strategy=impossible_strategy,
+        class_loss_weight=class_loss_weight)
 
 
 @dataclass
@@ -55,6 +60,8 @@ class BertForIdentificationClassification(BertPreTrainedModel):
             raise ValueError(
                 f'impossible_strategy must be one of {self.IMPOSSIBLE_STRATEGIES}')
         self.impossible_strategy = config.impossible_strategy
+
+        self.class_loss_weight = config.class_loss_weight
 
         self.init_weights()
 
@@ -118,7 +125,7 @@ class BertForIdentificationClassification(BertPreTrainedModel):
                 class_labels = torch.where(
                     is_impossible == 0, class_labels, NLILabel.NOT_MENTIONED.value
                 )
-            loss_cls = loss_fct(logits_cls, class_labels)
+            loss_cls = self.class_loss_weight * loss_fct(logits_cls, class_labels)
 
             loss_fct = nn.CrossEntropyLoss()
             active_logits = logits_span.view(-1, 2)
