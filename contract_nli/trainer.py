@@ -29,8 +29,7 @@ from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 from transformers import AdamW, get_linear_schedule_with_warmup
 
-from contract_nli.model.identification_classification import \
-    IdentificationClassificationModelOutput
+from contract_nli.batch_converter import classification_converter, identification_classification_converter
 from contract_nli.summary_writer import SummaryWriter
 
 logger = logging.getLogger(__name__)
@@ -54,7 +53,7 @@ def setup_optimizer(model, learning_rate: float, epsilon: float, weight_decay: f
 
 class Trainer(object):
     def __init__(
-            self, *, model, train_dataset, optimizer, output_dir: str,
+            self, *, model, train_dataset, optimizer, task: str, output_dir: str,
             per_gpu_train_batch_size: int, num_epochs: Optional[int] = None, max_steps: Optional[int] = None,
             dev_dataset=None, valid_steps: Optional[int]=None, per_gpu_dev_batch_size: Optional[int]=None,
             gradient_accumulation_steps: int=1, warmup_steps: int=0, max_grad_norm: Optional[float]=None,
@@ -62,6 +61,8 @@ class Trainer(object):
             save_steps: Optional[int] = None):
         if local_rank in [-1, 0]:
             self.tb_writer = SummaryWriter(os.path.join(output_dir, 'tensorboard'))
+        if task not in ['identification_classification', 'classification']:
+            raise ValueError("task must be either 'classification' or 'identification_classification'")
 
         train_batch_size = per_gpu_train_batch_size * max(1, n_gpu)
         train_sampler = RandomSampler(train_dataset) if local_rank == -1 else DistributedSampler(train_dataset)
@@ -104,6 +105,11 @@ class Trainer(object):
         self.per_gpu_train_batch_size = per_gpu_train_batch_size
         self.output_dir = output_dir
         self.save_steps = save_steps
+        self.task = task
+        if self.task == 'identification_classification':
+            self.converter = identification_classification_converter
+        else:
+            self.converter = classification_converter
 
         self.global_step = 0
         self.best_loss = np.inf
@@ -243,46 +249,26 @@ class Trainer(object):
             self.model.train()
         else:
             self.model.eval()
-
-        batch = tuple(t.to(self.device) for t in batch)
-
-        inputs = {
-            "input_ids": batch[0],
-            "attention_mask": batch[1],
-            "token_type_ids": batch[2],
-            "p_mask": batch[4],
-            "is_impossible": batch[5],
-            "class_labels": batch[7],
-            "span_labels": batch[8]
-        }
-
-        model_type = self.model.module.model_type if hasattr(self.model, "module") else self.model.model_type
-        if model_type in ["xlm", "roberta", "distilbert", "camembert", "bart", "longformer"]:
-            del inputs["token_type_ids"]
-
-        if model_type in ["xlnet", "xlm"]:
-            inputs.update({"cls_index": batch[3]})
-            # FIXME: Add lang_id to dataset
-            if hasattr(self.model, "config") and hasattr(self.model.config, "lang2id"):
-                inputs.update(
-                    {"langs": (torch.ones(batch[0].shape, dtype=torch.int64) * args.lang_id).to(self.device)}
-                )
-
-        outputs: IdentificationClassificationModelOutput = self.model(**inputs)
+        inputs = self.converter(batch, self.model, self.device)
+        outputs = self.model(**inputs)
         # model outputs are always tuple in transformers (see doc)
-        loss, loss_cls, loss_span = outputs.loss, outputs.loss_cls, outputs.loss_span
+        loss, loss_cls = outputs.loss, outputs.loss_cls,
+        if self.task == 'identification_classification':
+            loss_span = outputs.loss_span
 
         if self.n_gpu > 1:
             loss = loss.mean()  # mean() to average on multi-gpu parallel (not distributed) training
             loss_cls = loss_cls.mean()
-            loss_span = loss_span.mean()
+            if self.task == 'identification_classification':
+                loss_span = loss_span.mean()
 
         if self.is_top:
             prefix = 'train' if train else 'eval'
             self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_last_lr()[0])
             self.tb_writer.add_scalar(f"{prefix}/loss", loss.item())
             self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
-            self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
+            if self.task == 'identification_classification':
+                self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
 
         return loss
 
@@ -305,7 +291,8 @@ class Trainer(object):
         with open(os.path.join(checkpoint_dir, 'trainer_info.json'), 'w') as fout:
             json.dump({
                 'global_step': self.global_step,
-                'best_loss': self.best_loss
+                'best_loss': self.best_loss,
+                'task': self.task
             }, fout, indent=2)
         logger.info("Finished saving Trainer.")
 
@@ -326,6 +313,12 @@ class Trainer(object):
             self.best_loss = np.inf
         else:
             self.best_loss = trainer_info['best_loss']
+        self.task = trainer_info['task']
+        if self.task == 'identification_classification':
+            self.converter = identification_classification_converter
+        else:
+            self.converter = classification_converter
+
         self.optimizer.load_state_dict(torch.load(os.path.join(checkpoint_dir, "optimizer.pt")))
         self.scheduler.load_state_dict(torch.load(os.path.join(checkpoint_dir, "scheduler.pt")))
 

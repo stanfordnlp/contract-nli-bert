@@ -32,8 +32,9 @@ from contract_nli.dataset.encoder import SPAN_TOKEN
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification, update_config
+from contract_nli.model.classification import BertForClassification
 from contract_nli.postprocess import format_json
-from contract_nli.predictor import predict
+from contract_nli.predictor import predict, predict_classification
 from contract_nli.trainer import Trainer, setup_optimizer
 from contract_nli.utils import set_seed, distributed_barrier
 
@@ -94,35 +95,42 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             conf['config_name'] if conf['config_name'] else conf['model_name_or_path'],
             cache_dir=conf['cache_dir']
         )
-        config = update_config(
-            config, impossible_strategy='ignore',
-            class_loss_weight=conf['class_loss_weight'])
         tokenizer = AutoTokenizer.from_pretrained(
             conf['tokenizer_name'] if conf['tokenizer_name'] else conf['model_name_or_path'],
             do_lower_case=conf['do_lower_case'],
             cache_dir=conf['cache_dir'],
             use_fast=False
         )
-        n_added_token = tokenizer.add_special_tokens(
-            {'additional_special_tokens': [SPAN_TOKEN]})
-        if n_added_token == 0:
-            logger.warning(
-                f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
-                ' this warning if you are retraining a model from this train.py')
+        if conf['task'] == 'identification_classification':
+            config = update_config(
+                config, impossible_strategy='ignore',
+                class_loss_weight=conf['class_loss_weight'])
+            n_added_token = tokenizer.add_special_tokens(
+                {'additional_special_tokens': [SPAN_TOKEN]})
+            if n_added_token == 0:
+                logger.warning(
+                    f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
+                    ' this warning if you are retraining a model from this train.py')
+            else:
+                span_token_id = tokenizer.additional_special_tokens_ids[
+                    tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
+                logger.warning(
+                    f'SPAN_TOKEN "{SPAN_TOKEN}" was added as "{span_token_id}". You can safely ignore'
+                    ' this warning if you are training a model from pretrained LMs.')
+            model = BertForIdentificationClassification.from_pretrained(
+                conf['model_name_or_path'],
+                from_tf=bool(".ckpt" in conf['model_name_or_path']),
+                config=config,
+                cache_dir=conf['cache_dir']
+            )
+            model.resize_token_embeddings(len(tokenizer))
         else:
-            span_token_id = tokenizer.additional_special_tokens_ids[
-                tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
-            logger.warning(
-                f'SPAN_TOKEN "{SPAN_TOKEN}" was added as "{span_token_id}". You can safely ignore'
-                ' this warning if you are training a model from pretrained LMs.')
-        model = BertForIdentificationClassification.from_pretrained(
-            conf['model_name_or_path'],
-            from_tf=bool(".ckpt" in conf['model_name_or_path']),
-            config=config,
-            cache_dir=conf['cache_dir']
-        )
-        model.resize_token_embeddings(len(tokenizer))
-
+            model = BertForClassification.from_pretrained(
+                conf['model_name_or_path'],
+                from_tf=bool(".ckpt" in conf['model_name_or_path']),
+                config=config,
+                cache_dir=conf['cache_dir']
+            )
 
     logger.info("Training/evaluation parameters %s",
                 {k: v for k, v in conf.items() if k != 'raw_yaml'})
@@ -142,13 +150,15 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             conf['train_file'],
             tokenizer,
             max_seq_length=conf['max_seq_length'],
-            doc_stride=conf['doc_stride'],
+            doc_stride=conf.get('doc_stride', None),
             max_query_length=conf['max_query_length'],
             threads=None,
             local_rank=local_rank,
             overwrite_cache=conf['overwrite_cache'],
             labels_available=True,
-            cache_dir='.')[0]
+            cache_dir='.',
+            dataset_type=conf['task']
+        )[0]
 
     if conf['dev_file'] is not None:
         with distributed_barrier(not fs_main, local_rank != -1):
@@ -156,13 +166,15 @@ def main(conf, output_dir, local_rank, shared_filesystem):
                 conf['dev_file'],
                 tokenizer,
                 max_seq_length=conf['max_seq_length'],
-                doc_stride=conf['doc_stride'],
+                doc_stride=conf.get('doc_stride', None),
                 max_query_length=conf['max_query_length'],
                 threads=None,
                 local_rank=local_rank,
                 overwrite_cache=conf['overwrite_cache'],
                 labels_available=True,
-                cache_dir='.')
+                cache_dir='.',
+                dataset_type=conf['task']
+            )
     else:
         dev_dataset, dev_examples, dev_features = None, None, None
 
@@ -173,6 +185,7 @@ def main(conf, output_dir, local_rank, shared_filesystem):
         model=model,
         train_dataset=train_dataset,
         optimizer=optimizer,
+        task=conf['task'],
         output_dir=output_dir,
         per_gpu_train_batch_size=conf['per_gpu_train_batch_size'],
         num_epochs=conf['num_epochs'],
@@ -212,12 +225,17 @@ def main(conf, output_dir, local_rank, shared_filesystem):
 
     if dev_dataset is not None:
         logger.info("Evaluate the on validation data")
-
-        all_results = predict(
-            model, dev_dataset, dev_examples, dev_features,
-            per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
-            device=device, n_gpu=n_gpu,
-            weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+        if conf['task'] == 'identification_classification':
+            all_results = predict(
+                model, dev_dataset, dev_examples, dev_features,
+                per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+                device=device, n_gpu=n_gpu,
+                weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+        else:
+            all_results = predict_classification(
+                model, dev_dataset, dev_features,
+                per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+                device=device, n_gpu=n_gpu)
         metrics = evaluate_all(dev_examples, all_results,
                                [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
         logger.info(f"Results@: {json.dumps(metrics, indent=2)}")

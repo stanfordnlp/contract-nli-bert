@@ -1,5 +1,5 @@
 import collections
-from typing import List
+from typing import List, Union
 
 import numpy as np
 from scipy.special import softmax
@@ -19,6 +19,12 @@ class IdentificationClassificationResult:
     def __init__(self, data_id, class_probs, span_probs):
         self.class_probs = class_probs
         self.span_probs = span_probs
+        self.data_id = data_id
+
+
+class ClassificationResult:
+    def __init__(self, data_id, class_probs):
+        self.class_probs = class_probs
         self.data_id = data_id
 
 
@@ -73,7 +79,7 @@ def compute_predictions_logits(
 
 def format_json(
         all_examples: List[ContractNLIExample],
-        all_results: List[IdentificationClassificationResult]
+        all_results: List[Union[IdentificationClassificationResult, ClassificationResult]]
         ) -> List[dict]:
 
     data_id_to_result = {}
@@ -95,18 +101,28 @@ def format_json(
                 }]
             }
         assert len(example.spans) == len(example.splits)
+        if example.data_id not in data_id_to_result:
+            assert isinstance(all_results[0], ClassificationResult)
+            continue
         prediction = data_id_to_result[example.data_id]
-        documents[example.document_id]['annotation_sets'][0]['annotations'][example.hypothesis_id] = {
-            'choice': NLILabel(np.argmax(prediction.class_probs)).to_anno_name(),
-            'spans': np.where(prediction.span_probs[:, 1] > 0.5)[0].tolist(),
+        d = {
+            'choice': NLILabel(
+                np.argmax(prediction.class_probs)).to_anno_name(),
             'class_probs': {
                 NLILabel(i).to_anno_name(): float(p)
                 for i, p in enumerate(prediction.class_probs)
             },
-            'span_probs': prediction.span_probs[:, 1].tolist()
         }
-    all_hypothesis_ids = [
-        tuple(sorted(document['annotation_sets'][0]['annotations'].keys()))
-        for document in documents.values()]
-    assert len(set(all_hypothesis_ids)) == 1
+        if isinstance(prediction, IdentificationClassificationResult):
+            d.update({
+                'spans': np.where(prediction.span_probs[:, 1] > 0.5)[0].tolist(),
+                'span_probs': prediction.span_probs[:, 1].tolist()
+            })
+        documents[example.document_id]['annotation_sets'][0]['annotations'][example.hypothesis_id] = d
+
+    if isinstance(all_results[0], IdentificationClassificationResult):
+        all_hypothesis_ids = [
+            tuple(sorted(document['annotation_sets'][0]['annotations'].keys()))
+            for document in documents.values()]
+        assert len(set(all_hypothesis_ids)) == 1
     return sorted(documents.values(), key=lambda d: d['id'])

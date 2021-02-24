@@ -133,7 +133,7 @@ def _new_check_is_max_context(doc_spans, cur_span_index, position):
     return cur_span_index == best_span_index
 
 
-def _tokenize(tokens: List[str], splits: List[int]):
+def tokenize(tokenizer, tokens: List[str], splits: List[int]):
     tok_to_orig_index = []
     orig_to_tok_index = []
     all_doc_tokens = []
@@ -174,10 +174,10 @@ def convert_example_to_features(
         ) -> List[IdentificationClassificationFeatures]:
     features = []
 
-    all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index = _tokenize(
-        example.tokens, example.splits)
+    all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index = tokenize(
+        tokenizer, example.tokens, example.splits)
 
-    truncated_query = _tokenize(example.hypothesis_tokens, [])[0][:max_query_length]
+    truncated_query = tokenize(tokenizer, example.hypothesis_tokens, [])[0][:max_query_length]
 
     # Tokenizers who insert 2 SEP tokens in-between <context> & <question> need to have special handling
     # in the way they compute mask of added tokens.
@@ -395,7 +395,7 @@ def convert_examples_to_features(
             padding_strategy=padding_strategy,
             labels_available=labels_available
         )
-        features: List[IdentificationClassificationFeatures] = list(
+        features: List[List[IdentificationClassificationFeatures]] = list(
             tqdm(
                 p.imap(annotate_, examples, chunksize=32),
                 total=len(examples),

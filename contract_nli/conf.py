@@ -10,7 +10,11 @@ def load_conf(path):
     assert 'raw_yaml' not in conf
     conf['raw_yaml'] = conf_txt
 
-    if conf['doc_stride'] >= conf['max_seq_length'] - conf['max_query_length']:
+    if conf['task'] not in ['identification_classification', 'classification']:
+        raise ValueError(
+            "task must be either 'classification' or 'identification_classification'")
+
+    if conf['task'] == 'identification_classification' and conf['doc_stride'] >= conf['max_seq_length'] - conf['max_query_length']:
         raise RuntimeError(
             "WARNING - You've set a doc stride which may be superior to the document length in some "
             "examples. This could result in errors when building features from the examples. Please reduce the doc "

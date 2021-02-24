@@ -1,11 +1,11 @@
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import numpy as np
 import sklearn.metrics
 
 from contract_nli.dataset.loader import NLILabel, ContractNLIExample
-from contract_nli.postprocess import IdentificationClassificationResult
+from contract_nli.postprocess import IdentificationClassificationResult, ClassificationResult
 
 
 def evaluate_predicted_spans(y_true, y_pred) -> Dict[str, float]:
@@ -66,32 +66,38 @@ def _macro_average(dicts: List[Dict[str, float]]):
 
 def evaluate_all(
         examples: List[ContractNLIExample],
-        results: List[IdentificationClassificationResult],
+        results: List[Union[IdentificationClassificationResult, ClassificationResult]],
         ks: List[int]
         ) -> dict:
     id_to_result = {r.data_id: r for r in results}
-    span_probs = defaultdict(list)
-    span_labels = defaultdict(list)
+    if isinstance(results[0], IdentificationClassificationResult):
+        span_probs = defaultdict(list)
+        span_labels = defaultdict(list)
     class_probs = defaultdict(list)
     class_labels = defaultdict(list)
     for example in examples:
+        if example.data_id not in id_to_result:
+            assert isinstance(results[0], ClassificationResult)
+            continue
         label_id = example.data_id.split('_')[1]
-        result: IdentificationClassificationResult = id_to_result[example.data_id]
+        result = id_to_result[example.data_id]
         class_labels[label_id].append(example.label.value)
         class_probs[label_id].append(result.class_probs)
-        # FIXME: this calculates precision optimistically
-        if example.label != NLILabel.NOT_MENTIONED:
-            span_label = np.zeros(len(example.splits))
-            for s in example.annotated_spans:
-                span_label[s] = 1
-            span_labels[label_id].append(span_label)
-            span_probs[label_id].append(result.span_probs[:, 1])
-    preds_at_ks = {
-        k: {label_id: [predict_at_k(y_prob, k) for y_prob in y_probs]
-            for label_id, y_probs in span_probs.items()}
-        for k in ks
-    }
-    label_ids = sorted(span_labels.keys())
+        if isinstance(results[0], IdentificationClassificationResult):
+            # FIXME: this calculates precision optimistically
+            if example.label != NLILabel.NOT_MENTIONED:
+                span_label = np.zeros(len(example.splits))
+                for s in example.annotated_spans:
+                    span_label[s] = 1
+                span_labels[label_id].append(span_label)
+                span_probs[label_id].append(result.span_probs[:, 1])
+    if isinstance(results[0], IdentificationClassificationResult):
+        preds_at_ks = {
+            k: {label_id: [predict_at_k(y_prob, k) for y_prob in y_probs]
+                for label_id, y_probs in span_probs.items()}
+            for k in ks
+        }
+    label_ids = sorted(class_labels.keys())
     metrics = dict()
 
     # micro_label_micro_doc
@@ -100,80 +106,83 @@ def evaluate_all(
         np.concatenate([class_labels[l] for l in label_ids]),
         np.vstack([np.stack(class_probs[l]) for l in label_ids])
     )
-    y_true = np.concatenate([l for k in label_ids for l in span_labels[k]])
-    metrics['micro_label_micro_doc']['span'] = evaluate_spans(
-        y_true,
-        np.concatenate([l for l in label_ids for l in span_probs[l]])
-    )
-    for k in ks:
-        y_pred = np.concatenate([p for l in label_ids for p in preds_at_ks[k][l]])
-        metrics['micro_label_micro_doc']['span'].update({
-            f'{n}@{k}': v for n, v in evaluate_predicted_spans(y_true, y_pred).items()
-        })
+    if isinstance(results[0], IdentificationClassificationResult):
+        y_true = np.concatenate([l for k in label_ids for l in span_labels[k]])
+        metrics['micro_label_micro_doc']['span'] = evaluate_spans(
+            y_true,
+            np.concatenate([l for l in label_ids for l in span_probs[l]])
+        )
+        for k in ks:
+            y_pred = np.concatenate([p for l in label_ids for p in preds_at_ks[k][l]])
+            metrics['micro_label_micro_doc']['span'].update({
+                f'{n}@{k}': v for n, v in evaluate_predicted_spans(y_true, y_pred).items()
+            })
     metrics['macro_label_micro_doc'] = dict()
     metrics['macro_label_micro_doc']['class'] = _macro_average([
         evaluate_class(np.array(class_labels[l]), np.stack(class_probs[l]))
         for l in label_ids
     ])
-    metrics['macro_label_micro_doc']['span'] = _macro_average([
-        {
-            **evaluate_spans(
-                np.concatenate(span_labels[l]),
-                np.concatenate(span_probs[l])),
-            **{
-                f'{n}@{k}': v
-                for k in ks
-                for n, v in evaluate_predicted_spans(
-                    np.concatenate(span_labels[l]),
-                    np.concatenate(preds_at_ks[k][l])).items()
-            }
-        }
-        for l in label_ids
-    ])
-    metrics['macro_label_macro_doc'] = dict()
-    metrics['macro_label_macro_doc']['span'] = _macro_average([
-        _macro_average([
+    if isinstance(results[0], IdentificationClassificationResult):
+        metrics['macro_label_micro_doc']['span'] = _macro_average([
             {
-               **evaluate_spans(span_labels[l][i], span_probs[l][i]),
-               **{
-                   f'{n}@{k}': v
-                   for k in ks
-                   for n, v in evaluate_predicted_spans(
-                       span_labels[l][i],
-                       preds_at_ks[k][l][i]).items()
-               }
+                **evaluate_spans(
+                    np.concatenate(span_labels[l]),
+                    np.concatenate(span_probs[l])),
+                **{
+                    f'{n}@{k}': v
+                    for k in ks
+                    for n, v in evaluate_predicted_spans(
+                        np.concatenate(span_labels[l]),
+                        np.concatenate(preds_at_ks[k][l])).items()
+                }
             }
-            for i in range(len(span_labels[l]))
+            for l in label_ids
         ])
-        for l in label_ids
-    ])
+        metrics['macro_label_macro_doc'] = dict()
+        metrics['macro_label_macro_doc']['span'] = _macro_average([
+            _macro_average([
+                {
+                   **evaluate_spans(span_labels[l][i], span_probs[l][i]),
+                   **{
+                       f'{n}@{k}': v
+                       for k in ks
+                       for n, v in evaluate_predicted_spans(
+                           span_labels[l][i],
+                           preds_at_ks[k][l][i]).items()
+                   }
+                }
+                for i in range(len(span_labels[l]))
+            ])
+            for l in label_ids
+        ])
     metrics['label_wise'] = dict()
     for l in label_ids:
         metrics['label_wise'][l] = dict()
         metrics['label_wise'][l]['micro_doc'] = dict()
         metrics['label_wise'][l]['micro_doc']['class'] = evaluate_class(
             np.array(class_labels[l]), np.stack(class_probs[l]))
-        y_true = np.concatenate(span_labels[l])
-        metrics['label_wise'][l]['micro_doc']['span'] = {
-            **evaluate_spans(y_true, np.concatenate(span_probs[l])),
-            **{
-                f'{n}@{k}': v
-                for k in ks
-                for n, v in evaluate_predicted_spans(
-                    y_true, np.concatenate(preds_at_ks[k][l])).items()
-            }
-        }
-        metrics['label_wise'][l]['macro_doc'] = dict()
-        metrics['label_wise'][l]['macro_doc']['span'] = _macro_average([
-            {
-                **evaluate_spans(span_labels[l][i], span_probs[l][i]),
+        if isinstance(results[0], IdentificationClassificationResult):
+            y_true = np.concatenate(span_labels[l])
+            metrics['label_wise'][l]['micro_doc']['span'] = {
+                **evaluate_spans(y_true, np.concatenate(span_probs[l])),
                 **{
                     f'{n}@{k}': v
                     for k in ks
                     for n, v in evaluate_predicted_spans(
-                        span_labels[l][i], preds_at_ks[k][l][i]).items()
+                        y_true, np.concatenate(preds_at_ks[k][l])).items()
                 }
             }
-            for i in range(len(span_labels[l]))
-        ])
+            metrics['label_wise'][l]['macro_doc'] = dict()
+            metrics['label_wise'][l]['macro_doc']['span'] = _macro_average([
+                {
+                    **evaluate_spans(span_labels[l][i], span_probs[l][i]),
+                    **{
+                        f'{n}@{k}': v
+                        for k in ks
+                        for n, v in evaluate_predicted_spans(
+                            span_labels[l][i], preds_at_ks[k][l][i]).items()
+                    }
+                }
+                for i in range(len(span_labels[l]))
+            ])
     return metrics

@@ -82,3 +82,6 @@ weight_class_probs_by_span_probs: true
 
 # class loss is multiplied by this value
 class_loss_weight: 0.1
+
+# Either of 'identification_classification' or 'classification'
+task: "identification_classification"

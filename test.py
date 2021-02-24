@@ -12,8 +12,9 @@ from contract_nli.dataset.dataset import load_and_cache_examples
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification
+from contract_nli.model.classification import BertForClassification
 from contract_nli.postprocess import format_json
-from contract_nli.predictor import predict
+from contract_nli.predictor import predict, predict_classification
 
 logger = logging.getLogger(__name__)
 
@@ -48,29 +49,41 @@ def main(model_dir, dataset_path, output_prefix):
         cache_dir=conf['cache_dir'],
         use_fast=False
     )
-    model = BertForIdentificationClassification.from_pretrained(
-        model_dir,
-        cache_dir=conf['cache_dir']
-    )
+    if conf['task'] == 'identification_classification':
+        model = BertForIdentificationClassification.from_pretrained(
+            model_dir, cache_dir=conf['cache_dir'])
+    else:
+        model = BertForClassification.from_pretrained(
+            model_dir, cache_dir=conf['cache_dir'])
+
     model.to(device)
 
     dataset, examples, features = load_and_cache_examples(
         dataset_path,
         tokenizer,
         max_seq_length=conf['max_seq_length'],
-        doc_stride=conf['doc_stride'],
+        doc_stride=conf.get('doc_stride', None),
         max_query_length=conf['max_query_length'],
         threads=None,
         local_rank=-1,
         overwrite_cache=True,
         labels_available=True,
-        cache_dir='.')
+        cache_dir='.',
+        dataset_type=conf['task']
+    )
 
-    all_results = predict(
-        model, dataset, examples, features,
-        per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
-        device=device, n_gpu=n_gpu,
-        weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+    if conf['task'] == 'identification_classification':
+        all_results = predict(
+            model, dataset, examples, features,
+            per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+            device=device, n_gpu=n_gpu,
+            weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+    else:
+        all_results = predict_classification(
+            model, dataset, features,
+            per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+            device=device, n_gpu=n_gpu)
+
     metrics = evaluate_all(examples, all_results,
                            [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
     logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
