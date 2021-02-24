@@ -58,10 +58,10 @@ warmup_steps: 200
 lang_id: null
 
 # Validate every n steps
-logging_steps: 200
+valid_steps: 200
 
 # save model every n steps
-save_steps: 200
+save_steps: -1
 
 seed: 42
 

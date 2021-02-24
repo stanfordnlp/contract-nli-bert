@@ -56,7 +56,7 @@ class Trainer(object):
     def __init__(
             self, *, model, train_dataset, optimizer, output_dir: str,
             per_gpu_train_batch_size: int, num_epochs: Optional[int] = None, max_steps: Optional[int] = None,
-            dev_dataset=None, logging_steps: Optional[int]=None, per_gpu_dev_batch_size: Optional[int]=None,
+            dev_dataset=None, valid_steps: Optional[int]=None, per_gpu_dev_batch_size: Optional[int]=None,
             gradient_accumulation_steps: int=1, warmup_steps: int=0, max_grad_norm: Optional[float]=None,
             n_gpu: int=1, local_rank: int=-1, fp16: bool=False, fp16_opt_level=None, device=torch.device("cpu"),
             save_steps: Optional[int] = None):
@@ -99,7 +99,7 @@ class Trainer(object):
         self.device = device
         self.n_gpu = n_gpu
         self.local_rank = local_rank
-        self.logging_steps = logging_steps
+        self.valid_steps = valid_steps
         self.max_grad_norm = max_grad_norm
         self.per_gpu_train_batch_size = per_gpu_train_batch_size
         self.output_dir = output_dir
@@ -211,7 +211,7 @@ class Trainer(object):
                     self.global_step += 1
                     pbar.update()
 
-                    if self.dev_dataloader is not None and self.global_step % self.logging_steps == 0:
+                    if self.dev_dataloader is not None and self.global_step % self.valid_steps == 0:
                         loss = self.evaluate()
                         if loss < self.best_loss:
                             self.best_loss = loss

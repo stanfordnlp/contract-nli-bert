@@ -179,7 +179,7 @@ def main(conf, output_dir, local_rank, shared_filesystem):
         num_epochs=conf['num_epochs'],
         max_steps=conf['max_steps'],
         dev_dataset=dev_dataset,
-        logging_steps=conf['logging_steps'],
+        valid_steps=conf['valid_steps'],
         per_gpu_dev_batch_size=conf['per_gpu_eval_batch_size'],
         gradient_accumulation_steps=conf['gradient_accumulation_steps'],
         warmup_steps=conf['warmup_steps'],
