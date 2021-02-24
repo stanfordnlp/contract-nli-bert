@@ -16,7 +16,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import glob
 import json
 import logging
 import os
@@ -24,7 +23,7 @@ import os
 import click
 import torch
 import transformers
-from transformers import WEIGHTS_NAME, AutoConfig, AutoTokenizer
+from transformers import AutoConfig, AutoTokenizer
 from transformers.trainer_utils import is_main_process
 
 from contract_nli.conf import load_conf
@@ -33,10 +32,10 @@ from contract_nli.dataset.encoder import SPAN_TOKEN
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification, update_config
+from contract_nli.postprocess import format_json
 from contract_nli.predictor import predict
 from contract_nli.trainer import Trainer, setup_optimizer
 from contract_nli.utils import set_seed, distributed_barrier
-from contract_nli.postprocess import format_json
 
 logger = logging.getLogger(__name__)
 
