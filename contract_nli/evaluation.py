@@ -3,16 +3,26 @@ from typing import Dict, List, Union
 
 import numpy as np
 import sklearn.metrics
+from scipy.stats import hmean
 
 from contract_nli.dataset.loader import NLILabel, ContractNLIExample
 from contract_nli.postprocess import IdentificationClassificationResult, ClassificationResult
 
 
 def evaluate_predicted_spans(y_true, y_pred) -> Dict[str, float]:
+    if y_true.sum() == 0:
+        # do not use zero_division=np.nan because it cannot distinguish
+        # zero divisions from y_true and y_pred in f1_score
+        recall = np.nan
+        f1 = np.nan
+    else:
+        recall = sklearn.metrics.recall_score(y_true, y_pred)
+        f1 = sklearn.metrics.f1_score(y_true, y_pred)
+
     return {
         'precision': sklearn.metrics.precision_score(y_true, y_pred, zero_division=0),
-        'recall': sklearn.metrics.recall_score(y_true, y_pred),
-        'f1': sklearn.metrics.f1_score(y_true, y_pred),
+        'recall': recall,
+        'f1': f1,
         'accuracy': sklearn.metrics.accuracy_score(y_true, y_pred),
     }
 
@@ -49,18 +59,37 @@ def evaluate_class(y_true, y_prob) -> Dict[str, float]:
         ln = label.name.lower()
         _y_true = y_true == label.value
         _y_pred = y_pred == label.value
+        if _y_true.sum() == 0:
+            # do not use zero_division=np.nan because it cannot distinguish
+            # zero divisions from y_true and y_pred in f1_score
+            recall = np.nan
+            f1 = np.nan
+        else:
+            recall = sklearn.metrics.recall_score(_y_true, _y_pred)
+            f1 = sklearn.metrics.f1_score(_y_true, _y_pred)
         metrics.update({
             f'precision_{ln}': sklearn.metrics.precision_score(_y_true, _y_pred, zero_division=0),
-            f'recall_{ln}': sklearn.metrics.recall_score(_y_true, _y_pred),
-            f'f1_{ln}': sklearn.metrics.f1_score(_y_true, _y_pred),
+            f'recall_{ln}': recall,
+            f'f1_{ln}': f1,
         })
+    for m in ('precision', 'recall', 'f1'):
+        m_e = metrics[f'{m}_{NLILabel.ENTAILMENT.name.lower()}']
+        m_c = metrics[f'{m}_{NLILabel.CONTRADICTION.name.lower()}']
+        if np.isnan(m_e) or np.isnan(m_c):
+            metrics[f'{m}_mean'] = np.nan
+            metrics[f'{m}_hmean'] = np.nan
+        else:
+            metrics[f'{m}_mean'] = np.mean((m_e, m_c))
+            metrics[f'{m}_hmean'] = hmean((m_e, m_c))
+
     return metrics
 
 
 def _macro_average(dicts: List[Dict[str, float]]):
     ret = dict()
     for k in dicts[0].keys():
-        ret[k] = sum((d[k] for d in dicts)) / float(len(dicts))
+        vals = [d[k] for d in dicts if not np.isnan(d[k])]
+        ret[k] = sum(vals) / float(len(vals))
     return ret
 
 
@@ -102,11 +131,17 @@ def evaluate_all(
 
     # micro_label_micro_doc
     metrics['micro_label_micro_doc'] = dict()
-    metrics['micro_label_micro_doc']['class'] = evaluate_class(
-        np.concatenate([class_labels[l] for l in label_ids]),
-        np.vstack([np.stack(class_probs[l]) for l in label_ids])
+    metrics['micro_label_micro_doc']['class_binary'] = evaluate_class(
+        np.concatenate([np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value]
+                        for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]]),
+        np.vstack([np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :]
+                   for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]])
     )
     if isinstance(results[0], IdentificationClassificationResult):
+        metrics['micro_label_micro_doc']['class'] = evaluate_class(
+            np.concatenate([class_labels[l] for l in label_ids]),
+            np.vstack([np.stack(class_probs[l]) for l in label_ids])
+        )
         y_true = np.concatenate([l for k in label_ids for l in span_labels[k]])
         metrics['micro_label_micro_doc']['span'] = evaluate_spans(
             y_true,
@@ -118,11 +153,17 @@ def evaluate_all(
                 f'{n}@{k}': v for n, v in evaluate_predicted_spans(y_true, y_pred).items()
             })
     metrics['macro_label_micro_doc'] = dict()
-    metrics['macro_label_micro_doc']['class'] = _macro_average([
-        evaluate_class(np.array(class_labels[l]), np.stack(class_probs[l]))
-        for l in label_ids
+    metrics['macro_label_micro_doc']['class_binary'] = _macro_average([
+        evaluate_class(
+            np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value],
+            np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :])
+        for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]
     ])
     if isinstance(results[0], IdentificationClassificationResult):
+        metrics['macro_label_micro_doc']['class'] = _macro_average([
+            evaluate_class(np.array(class_labels[l]), np.stack(class_probs[l]))
+            for l in label_ids
+        ])
         metrics['macro_label_micro_doc']['span'] = _macro_average([
             {
                 **evaluate_spans(
@@ -159,9 +200,17 @@ def evaluate_all(
     for l in label_ids:
         metrics['label_wise'][l] = dict()
         metrics['label_wise'][l]['micro_doc'] = dict()
-        metrics['label_wise'][l]['micro_doc']['class'] = evaluate_class(
-            np.array(class_labels[l]), np.stack(class_probs[l]))
+        metrics['label_wise'][l]['micro_doc']['class_binary'] = evaluate_class(
+            np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value],
+            np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :])
+        if not (NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]):
+            metrics['label_wise'][l]['micro_doc']['class_binary'] = {
+                k: np.nan for k in metrics['label_wise'][l]['micro_doc']['class_binary'].keys()
+            }
         if isinstance(results[0], IdentificationClassificationResult):
+            metrics['label_wise'][l]['micro_doc']['class'] = evaluate_class(
+                np.array(class_labels[l]), np.stack(class_probs[l]))
+
             y_true = np.concatenate(span_labels[l])
             metrics['label_wise'][l]['micro_doc']['span'] = {
                 **evaluate_spans(y_true, np.concatenate(span_probs[l])),
