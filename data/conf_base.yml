@@ -52,16 +52,16 @@ num_epochs: 5.0
 max_steps: null
 
 # Linear warmup over warmup_steps
-warmup_steps: 0
+warmup_steps: 200
 
 # language id of input for language-specific xlm models (see tokenization_xlm.PRETRAINED_INIT_CONFIGURATION)
 lang_id: null
 
 # Validate every n steps
-logging_steps: 500
+logging_steps: 200
 
 # save model every n steps
-save_steps: 500
+save_steps: 200
 
 seed: 42
 
