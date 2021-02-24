@@ -170,14 +170,18 @@ def convert_example_to_features(
         doc_stride: int,
         max_query_length: int,
         padding_strategy,
-        labels_available: bool
+        labels_available: bool,
+        symbol_based_hypothesis: bool
         ) -> List[IdentificationClassificationFeatures]:
     features = []
 
     all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index = tokenize(
         tokenizer, example.tokens, example.splits)
 
-    truncated_query = tokenize(tokenizer, example.hypothesis_tokens, [])[0][:max_query_length]
+    if symbol_based_hypothesis:
+        truncated_query = [example.hypothesis_symbol]
+    else:
+        truncated_query = tokenize(tokenizer, example.hypothesis_tokens, [])[0][:max_query_length]
 
     # Tokenizers who insert 2 SEP tokens in-between <context> & <question> need to have special handling
     # in the way they compute mask of added tokens.
@@ -364,6 +368,7 @@ def convert_examples_to_features(
     doc_stride,
     max_query_length,
     labels_available,
+    symbol_based_hypothesis: bool,
     padding_strategy="max_length",
     threads=None,
     tqdm_enabled=True,
@@ -393,7 +398,8 @@ def convert_examples_to_features(
             doc_stride=doc_stride,
             max_query_length=max_query_length,
             padding_strategy=padding_strategy,
-            labels_available=labels_available
+            labels_available=labels_available,
+            symbol_based_hypothesis=symbol_based_hypothesis
         )
         features: List[List[IdentificationClassificationFeatures]] = list(
             tqdm(

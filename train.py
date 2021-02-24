@@ -27,7 +27,7 @@ from transformers import AutoConfig, AutoTokenizer
 from transformers.trainer_utils import is_main_process
 
 from contract_nli.conf import load_conf
-from contract_nli.dataset.dataset import load_and_cache_examples
+from contract_nli.dataset.dataset import load_and_cache_examples, load_and_cache_features
 from contract_nli.dataset.encoder import SPAN_TOKEN
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
@@ -105,25 +105,12 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             config = update_config(
                 config, impossible_strategy='ignore',
                 class_loss_weight=conf['class_loss_weight'])
-            n_added_token = tokenizer.add_special_tokens(
-                {'additional_special_tokens': [SPAN_TOKEN]})
-            if n_added_token == 0:
-                logger.warning(
-                    f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
-                    ' this warning if you are retraining a model from this train.py')
-            else:
-                span_token_id = tokenizer.additional_special_tokens_ids[
-                    tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
-                logger.warning(
-                    f'SPAN_TOKEN "{SPAN_TOKEN}" was added as "{span_token_id}". You can safely ignore'
-                    ' this warning if you are training a model from pretrained LMs.')
             model = BertForIdentificationClassification.from_pretrained(
                 conf['model_name_or_path'],
                 from_tf=bool(".ckpt" in conf['model_name_or_path']),
                 config=config,
                 cache_dir=conf['cache_dir']
             )
-            model.resize_token_embeddings(len(tokenizer))
         else:
             model = BertForClassification.from_pretrained(
                 conf['model_name_or_path'],
@@ -146,35 +133,85 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
 
     with distributed_barrier(not fs_main, local_rank != -1):
-        train_dataset = load_and_cache_examples(
+        examples = load_and_cache_examples(
             conf['train_file'],
+            local_rank=local_rank,
+            overwrite_cache=conf['overwrite_cache'],
+            cache_dir='.',
+        )
+        if conf['task'] == 'identification_classification':
+            n_added_token = tokenizer.add_special_tokens(
+                {'additional_special_tokens': tokenizer.additional_special_tokens + [SPAN_TOKEN]})
+            if n_added_token == 0:
+                logger.warning(
+                    f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
+                    ' this warning if you are retraining a model from this train.py')
+            else:
+                span_token_id = tokenizer.additional_special_tokens_ids[
+                    tokenizer.additional_special_tokens.index(SPAN_TOKEN)]
+                logger.warning(
+                    f'SPAN_TOKEN "{SPAN_TOKEN}" was added as "{span_token_id}". You can safely ignore'
+                    ' this warning if you are training a model from pretrained LMs.')
+        if conf['symbol_based_hypothesis']:
+            hypothesis_symbols = sorted(set([e.hypothesis_symbol for e in examples]))
+            n_added_token = tokenizer.add_special_tokens(
+                {'additional_special_tokens': tokenizer.additional_special_tokens + hypothesis_symbols})
+            if n_added_token == 0:
+                logger.warning(
+                    f'SPAN_TOKEN "{SPAN_TOKEN}" was not added. You can safely ignore'
+                    ' this warning if you are retraining a model from this train.py')
+            else:
+                assert n_added_token == len(hypothesis_symbols)
+                hypothesis_symbol_dic = {
+                    s: tokenizer.additional_special_tokens_ids[tokenizer.additional_special_tokens.index(s)]
+                    for s in hypothesis_symbols
+                }
+                logger.warning(
+                    f'Hypothesis symbols were added as "{hypothesis_symbol_dic}". '
+                    'You can safely ignore this warning if you are training a '
+                    'model from pretrained LMs.')
+        model.resize_token_embeddings(len(tokenizer))
+
+        train_dataset = load_and_cache_features(
+            conf['train_file'],
+            examples,
             tokenizer,
             max_seq_length=conf['max_seq_length'],
             doc_stride=conf.get('doc_stride', None),
             max_query_length=conf['max_query_length'],
+            dataset_type=conf['task'],
+            symbol_based_hypothesis=conf['symbol_based_hypothesis'],
             threads=None,
             local_rank=local_rank,
             overwrite_cache=conf['overwrite_cache'],
             labels_available=True,
             cache_dir='.',
-            dataset_type=conf['task']
         )[0]
 
     if conf['dev_file'] is not None:
         with distributed_barrier(not fs_main, local_rank != -1):
-            dev_dataset, dev_examples, dev_features = load_and_cache_examples(
+            dev_examples = load_and_cache_examples(
                 conf['dev_file'],
+                local_rank=local_rank,
+                overwrite_cache=conf['overwrite_cache'],
+                cache_dir='.'
+            )
+            dev_dataset, dev_features = load_and_cache_features(
+                conf['dev_file'],
+                examples,
                 tokenizer,
                 max_seq_length=conf['max_seq_length'],
                 doc_stride=conf.get('doc_stride', None),
                 max_query_length=conf['max_query_length'],
+                dataset_type=conf['task'],
+                symbol_based_hypothesis=conf['symbol_based_hypothesis'],
                 threads=None,
                 local_rank=local_rank,
                 overwrite_cache=conf['overwrite_cache'],
                 labels_available=True,
-                cache_dir='.',
-                dataset_type=conf['task']
+                cache_dir='.'
             )
+
     else:
         dev_dataset, dev_examples, dev_features = None, None, None
 

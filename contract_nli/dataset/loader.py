@@ -63,6 +63,7 @@ class ContractNLIExample:
         self.data_id: str = data_id
         self.document_id: str = document_id
         self.hypothesis_id: str = hypothesis_id
+        self.hypothesis_symbol: str = f'[{hypothesis_id}]'
         self.file_name: str = file_name
         self.hypothesis_text: str = hypothesis_text
         self.hypothesis_tokens: List[str] = hypothesis_tokens

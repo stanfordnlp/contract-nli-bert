@@ -8,7 +8,7 @@ import transformers
 from transformers import AutoTokenizer
 
 from contract_nli.conf import load_conf
-from contract_nli.dataset.dataset import load_and_cache_examples
+from contract_nli.dataset.dataset import load_and_cache_examples, load_and_cache_features
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
     BertForIdentificationClassification
@@ -58,18 +58,26 @@ def main(model_dir, dataset_path, output_prefix):
 
     model.to(device)
 
-    dataset, examples, features = load_and_cache_examples(
+    examples = load_and_cache_examples(
         dataset_path,
+        local_rank=-1,
+        overwrite_cache=True,
+        cache_dir='.'
+    )
+    dataset, features = load_and_cache_features(
+        dataset_path,
+        examples,
         tokenizer,
         max_seq_length=conf['max_seq_length'],
         doc_stride=conf.get('doc_stride', None),
         max_query_length=conf['max_query_length'],
+        dataset_type=conf['task'],
+        symbol_based_hypothesis=conf['symbol_based_hypothesis'],
         threads=None,
         local_rank=-1,
         overwrite_cache=True,
         labels_available=True,
-        cache_dir='.',
-        dataset_type=conf['task']
+        cache_dir='.'
     )
 
     if conf['task'] == 'identification_classification':

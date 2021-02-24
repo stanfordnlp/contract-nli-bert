@@ -85,3 +85,7 @@ class_loss_weight: 0.1
 
 # Either of 'identification_classification' or 'classification'
 task: "identification_classification"
+
+# Whether to treat hypothesis (query) texts as a symbol instead of feeding the
+# hypothesis descriptions
+symbol_based_hypothesis: false

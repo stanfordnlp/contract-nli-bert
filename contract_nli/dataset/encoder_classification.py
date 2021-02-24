@@ -67,6 +67,7 @@ def convert_example_to_features(
         max_seq_length: int,
         max_query_length: int,
         padding_strategy,
+        symbol_based_hypothesis: bool
         ) -> ClassificationFeatures:
     all_doc_tokens, orig_to_tok_index, tok_to_orig_index, span_to_orig_index = tokenize(
        tokenizer, example.tokens, example.splits)
@@ -81,8 +82,11 @@ def convert_example_to_features(
         relevant_tokens.extend(all_doc_tokens[start_token_index:end_token_index])
     assert len(relevant_tokens) > 0 and SPAN_TOKEN not in relevant_tokens
 
-    truncated_query = tokenize(
-        tokenizer, example.hypothesis_tokens, [])[0][:max_query_length]
+    if symbol_based_hypothesis:
+        truncated_query = [example.hypothesis_symbol]
+    else:
+        truncated_query = tokenize(
+            tokenizer, example.hypothesis_tokens, [])[0][:max_query_length]
 
     # Define the side we want to truncate / pad and the text/pair sorting
     if tokenizer.padding_side == "right":
@@ -148,6 +152,7 @@ def convert_examples_to_features(
     tokenizer,
     max_seq_length,
     max_query_length,
+    symbol_based_hypothesis: bool,
     padding_strategy="max_length",
     threads=None,
     tqdm_enabled=True,
@@ -179,7 +184,8 @@ def convert_examples_to_features(
             convert_example_to_features,
             max_seq_length=max_seq_length,
             max_query_length=max_query_length,
-            padding_strategy=padding_strategy
+            padding_strategy=padding_strategy,
+            symbol_based_hypothesis=symbol_based_hypothesis
         )
         features: List[ClassificationFeatures] = list(
             tqdm(
