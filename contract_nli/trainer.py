@@ -154,12 +154,16 @@ class Trainer(object):
         return len(self.train_dataloader)
 
     @property
+    def n_steps_per_epoch(self):
+        return len(self.train_dataloader) // self.gradient_accumulation_steps
+
+    @property
     def current_epoch(self):
-        return self.global_step // self.n_samples
+        return self.global_step // self.n_steps_per_epoch
 
     @property
     def current_step(self):
-        return self.global_step % self.n_samples
+        return self.global_step % self.n_steps_per_epoch
 
     @property
     def is_top(self) -> bool:
