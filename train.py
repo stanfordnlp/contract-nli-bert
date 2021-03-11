@@ -198,7 +198,7 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             )
             dev_dataset, dev_features = load_and_cache_features(
                 conf['dev_file'],
-                examples,
+                dev_examples,
                 tokenizer,
                 max_seq_length=conf['max_seq_length'],
                 doc_stride=conf.get('doc_stride', None),
