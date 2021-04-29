@@ -76,7 +76,7 @@ class BertForIdentificationClassification(BertPreTrainedModel):
         class_labels=None,
         span_labels=None,
         p_mask=None,
-        is_impossible=None,
+        valid_span_missing_in_context=None,
     ) -> IdentificationClassificationModelOutput:
         r"""
         span_mask (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
@@ -113,17 +113,18 @@ class BertForIdentificationClassification(BertPreTrainedModel):
         if class_labels is not None:
             assert p_mask is not None
             assert span_labels is not None
-            assert is_impossible is not None
+            assert valid_span_missing_in_context is not None
 
             loss_fct = nn.CrossEntropyLoss()
             if self.impossible_strategy == 'ignore':
                 class_labels = torch.where(
-                    is_impossible == 0, class_labels,
+                    valid_span_missing_in_context == 0, class_labels,
                     torch.tensor(loss_fct.ignore_index).type_as(class_labels)
                 )
             elif self.impossible_strategy == 'not_mentioned':
                 class_labels = torch.where(
-                    is_impossible == 0, class_labels, NLILabel.NOT_MENTIONED.value
+                    valid_span_missing_in_context == 0, class_labels,
+                    NLILabel.NOT_MENTIONED.value
                 )
             loss_cls = self.class_loss_weight * loss_fct(logits_cls, class_labels)
 

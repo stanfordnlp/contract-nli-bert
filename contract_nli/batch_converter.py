@@ -8,7 +8,7 @@ def identification_classification_converter(batch, model, device, no_labels=Fals
         "attention_mask": batch[1],
         "token_type_ids": batch[2],
         "p_mask": batch[4],
-        "is_impossible": batch[5]
+        "valid_span_missing_in_context": batch[5]
     }
     if not no_labels:
         inputs["class_labels"] = batch[7]

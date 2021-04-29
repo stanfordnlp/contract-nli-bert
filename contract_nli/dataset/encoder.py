@@ -28,7 +28,7 @@ from transformers.tokenization_utils_base import BatchEncoding, \
     PreTrainedTokenizerBase
 from transformers.utils import logging
 
-from contract_nli.dataset.loader import ContractNLIExample
+from contract_nli.dataset.loader import ContractNLIExample, NLILabel
 
 # Store the tokenizers which insert 2 separators tokens
 MULTI_SEP_TOKENS_TOKENIZERS_SET = {"roberta", "camembert", "bart", "mpnet"}
@@ -62,7 +62,7 @@ class IdentificationClassificationFeatures:
         span_to_orig_map: mapping between the spans and the original spans, needed in order to identify the answer.
         class_label:
         span_labels:
-        is_impossible:
+        valid_span_missing_in_context: Class label is NOT "not mentioned" and a valid span is not in the context
         data_id:
         encoding: optionally store the BatchEncoding with the fast-tokenizer alignement methods.
     """
@@ -83,7 +83,7 @@ class IdentificationClassificationFeatures:
         span_to_orig_map,
         class_label,
         span_labels,
-        is_impossible,
+        valid_span_missing_in_context,
         data_id: str = None,
         encoding: BatchEncoding = None,
     ):
@@ -103,7 +103,9 @@ class IdentificationClassificationFeatures:
 
         self.class_label = class_label
         self.span_labels = span_labels
-        self.is_impossible = is_impossible
+        if valid_span_missing_in_context:
+            assert class_label in [NLILabel.ENTAILMENT.value, NLILabel.CONTRADICTION.value]
+        self.valid_span_missing_in_context = valid_span_missing_in_context
         self.data_id = data_id
 
         self.encoding = encoding
@@ -307,10 +309,10 @@ def convert_example_to_features(
             np.isin(np.array(span["input_ids"]), [span_token_id, tokenizer.cls_token_id])
         ).astype(np.int32)
 
-        span_is_impossible = example.is_impossible
+        valid_span_missing_in_context = False
         span_labels = np.zeros_like(span["input_ids"])
         if labels_available:
-            if not span_is_impossible:
+            if example.label != NLILabel.NOT_MENTIONED:
                 doc_start = span["start"]
                 doc_end = span["start"] + span["paragraph_len"]
                 annotated_spans = set(example.annotated_spans)
@@ -319,7 +321,7 @@ def convert_example_to_features(
                     for i in range(doc_start, doc_end)
                 ]).astype(int)
                 if not np.any(_span_labels):
-                    span_is_impossible = True
+                    valid_span_missing_in_context = True
                 tok_start = query_with_special_tokens_length
                 tok_end = tok_start + span["paragraph_len"]
                 if tokenizer.padding_side == "right":
@@ -348,7 +350,7 @@ def convert_example_to_features(
                 span_to_orig_map=span["span_to_orig_map"],
                 class_label=class_label,
                 span_labels=span_labels,
-                is_impossible=span_is_impossible,
+                valid_span_missing_in_context=valid_span_missing_in_context,
                 data_id=example.data_id,
             )
         )
@@ -432,7 +434,7 @@ def convert_examples_to_features(
     all_token_type_ids = torch.tensor([f.token_type_ids for f in features], dtype=torch.long)
     all_cls_index = torch.tensor([f.cls_index for f in features], dtype=torch.long)
     all_p_mask = torch.tensor([f.p_mask for f in features], dtype=torch.float)
-    all_is_impossible = torch.tensor([f.is_impossible for f in features], dtype=torch.float)
+    all_valid_span_missing_in_context = torch.tensor([f.valid_span_missing_in_context for f in features], dtype=torch.float)
 
     all_feature_index = torch.arange(all_input_ids.size(0), dtype=torch.long)
     dataset = [
@@ -441,7 +443,7 @@ def convert_examples_to_features(
         all_token_type_ids,
         all_cls_index,
         all_p_mask,
-        all_is_impossible,
+        all_valid_span_missing_in_context,
         all_feature_index
     ]
     if labels_available:

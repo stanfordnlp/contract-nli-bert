@@ -58,7 +58,7 @@ class ContractNLIExample:
         spans,
         char_to_word_offset,
         label,
-        annotated_spans,
+        annotated_spans
     ):
         self.data_id: str = data_id
         self.document_id: str = document_id
@@ -75,7 +75,6 @@ class ContractNLIExample:
         self.char_to_word_offset: List[int] = char_to_word_offset
         self.label: NLILabel = label
         self.annotated_spans: List[int] = annotated_spans
-        self.is_impossible: bool = label == NLILabel.NOT_MENTIONED
 
     @staticmethod
     def tokenize_and_align(text: str, spans: List[Tuple[int, int]]):
@@ -139,7 +138,7 @@ class ContractNLIExample:
                     spans=document['spans'],
                     char_to_word_offset=char_to_word_offset,
                     label=NLILabel.from_str(annotation['choice']),
-                    annotated_spans=annotation['spans'],
+                    annotated_spans=annotation['spans']
                 )
                 examples.append(example)
         return examples
