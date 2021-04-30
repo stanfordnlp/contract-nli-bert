@@ -4,12 +4,15 @@ from typing import List
 import torch
 from torch.utils.data import DataLoader, SequentialSampler
 from tqdm import tqdm
+import numpy as np
+from scipy.special import softmax
 
 from contract_nli.model.identification_classification import \
     IdentificationClassificationModelOutput
 from contract_nli.postprocess import IdentificationClassificationPartialResult, \
     compute_predictions_logits, IdentificationClassificationResult, ClassificationResult
 from contract_nli.batch_converter import classification_converter, identification_classification_converter
+from contract_nli.dataset.loader import NLILabel
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +91,8 @@ def predict_classification(model, dataset, features, *, per_gpu_batch_size: int,
     logger.info("  Num examples = %d", len(dataset))
     logger.info("  Batch size = %d", eval_batch_size)
 
+    label_inds = [NLILabel.ENTAILMENT.value, NLILabel.CONTRADICTION.value]
+
     all_results = []
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         model.eval()
@@ -98,8 +103,10 @@ def predict_classification(model, dataset, features, *, per_gpu_batch_size: int,
 
         for i, feature_index in enumerate(feature_indices):
             eval_feature = features[feature_index.item()]
-            class_logits = to_list(outputs.class_logits[i])
-            result = ClassificationResult(eval_feature.data_id, class_logits)
+            class_logits = outputs.class_logits[i].detach().cpu()
+            class_probs = np.zeros_like(class_logits)
+            class_probs[label_inds] = softmax(class_logits[label_inds])
+            result = ClassificationResult(eval_feature.data_id, class_probs.tolist())
             all_results.append(result)
 
     return all_results
