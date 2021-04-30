@@ -42,7 +42,7 @@ adam_epsilon: !!float 1e-8
 
 max_grad_norm: 1.0
 
-num_epochs: 5.0
+num_epochs: 15.0
 
 # If set, total number of training steps to perform. Conflicts with num_epochs.
 max_steps: null
@@ -54,7 +54,7 @@ warmup_steps: 200
 lang_id: null
 
 # Validate every n steps
-valid_steps: 3000
+valid_steps: 200
 
 # save model every n steps
 save_steps: -1
