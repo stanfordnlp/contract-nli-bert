@@ -93,6 +93,17 @@ def _macro_average(dicts: List[Dict[str, float]]):
     return ret
 
 
+def remove_not_mentioned(y_pred):
+    assert y_pred.shape[1] == 3
+    y_bin = y_pred[:, [NLILabel.CONTRADICTION.value, NLILabel.ENTAILMENT.value]]
+    y_bin = np.where(np.tile(np.sum(y_bin, axis=1, keepdims=True), [1, 2]) == 0,
+                     0.5,
+                     y_bin / np.sum(y_bin, axis=1, keepdims=True))
+    y_pred = np.zeros((len(y_pred), 3), dtype=y_pred.dtype)
+    y_pred[:, [NLILabel.CONTRADICTION.value, NLILabel.ENTAILMENT.value]] = y_bin
+    return y_pred
+
+
 def evaluate_all(
         examples: List[ContractNLIExample],
         results: List[Union[IdentificationClassificationResult, ClassificationResult]],
@@ -134,8 +145,9 @@ def evaluate_all(
     metrics['micro_label_micro_doc']['class_binary'] = evaluate_class(
         np.concatenate([np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value]
                         for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]]),
-        np.vstack([np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :]
-                   for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]])
+        remove_not_mentioned(
+            np.vstack([np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :]
+                       for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]]))
     )
     if isinstance(results[0], IdentificationClassificationResult):
         metrics['micro_label_micro_doc']['class'] = evaluate_class(
@@ -156,7 +168,7 @@ def evaluate_all(
     metrics['macro_label_micro_doc']['class_binary'] = _macro_average([
         evaluate_class(
             np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value],
-            np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :])
+            remove_not_mentioned(np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :]))
         for l in label_ids if NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]
     ])
     if isinstance(results[0], IdentificationClassificationResult):
@@ -202,7 +214,7 @@ def evaluate_all(
         metrics['label_wise'][l]['micro_doc'] = dict()
         metrics['label_wise'][l]['micro_doc']['class_binary'] = evaluate_class(
             np.array(class_labels[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value],
-            np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :])
+            remove_not_mentioned(np.stack(class_probs[l])[np.array(class_labels[l]) != NLILabel.NOT_MENTIONED.value, :]))
         if not (NLILabel.CONTRADICTION.value in class_labels[l] and NLILabel.ENTAILMENT.value in class_labels[l]):
             metrics['label_wise'][l]['micro_doc']['class_binary'] = {
                 k: np.nan for k in metrics['label_wise'][l]['micro_doc']['class_binary'].keys()
