@@ -249,6 +249,8 @@ def main(conf, output_dir, local_rank, shared_filesystem):
     if os.path.exists(trainer.best_checkpoint_dir):
         logger.info(f"Loading best model from {trainer.best_checkpoint_dir}")
         trainer.load(trainer.best_checkpoint_dir)
+        trainer.deploy()
+        model = trainer.model
 
     logger.info("Saving model checkpoint to %s", output_dir)
     # Save a trained model, configuration and tokenizer using `save_pretrained()`.
