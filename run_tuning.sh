@@ -20,7 +20,7 @@ function usage()
     echo "    Run five instances of train.py with data/conf_base.yml and different seeds,"
     echo "    and save them to outdir/params_0001/000X/ ."
     echo " ./run_tuning.sh -s 2 -n 10 gca00000 params/ outdir/"
-    echo "    Run train.py with params/param_0002.yml to params/param_0011.yml and "
+    echo "    Run train.py with params/conf_0002.yml to params/conf_0011.yml and "
     echo "    and save them to outdir/params_00XX/0001/ ."
     echo ""
 }
@@ -101,7 +101,7 @@ fi
 ############# End of obtained code ####################
 
 group_id="$1"
-param_path="`readlink -f $2`"
+conf_path="`readlink -f $2`"
 out_dir="`readlink -f $3`"
 
 initial_seed_str="seed: 42"
@@ -133,17 +133,17 @@ mkdir -p $out_dir/params/
 
 for i in $(seq -f "%04g" $arg_start $end_idx); do
     for seed in $(seq 1 $arg_mul); do
-        param_name="param_${i}_`printf %04g $seed`"
-        copied_param_path=$out_dir/params/${param_name}.yml
+        conf_name="conf_${i}_`printf %04g $seed`"
+        copied_conf_path=$out_dir/params/${conf_name}.yml
         if [[ $arg_num -gt 0 ]]; then
-            input_param_path="${param_path}/param_${i}.yml"
+            input_conf_path="${conf_path}/conf_${i}.yml"
         else
-            input_param_path="$param_path"
+            input_conf_path="$conf_path"
         fi
-        convert_conf $input_param_path $copied_param_path $seed
-        out_path=${out_dir}/$param_name
-        echo "bash train_pbs.sh $group_id $copied_param_path 1 $out_path"
-        bash train_pbs.sh $group_id $copied_param_path 1 $out_path
+        convert_conf $input_conf_path $copied_conf_path $seed
+        out_path=${out_dir}/$conf_name
+        echo "bash train_pbs.sh $group_id $copied_conf_path 1 $out_path"
+        bash train_pbs.sh $group_id $copied_conf_path 1 $out_path
         sleep 2
     done
 done
