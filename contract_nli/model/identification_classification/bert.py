@@ -1,46 +1,13 @@
-from dataclasses import dataclass
-from typing import Optional
-
 import torch
 from torch import nn
-from transformers.file_utils import ModelOutput
 from transformers.models.bert import BertPreTrainedModel, BertModel
 from transformers.utils import logging
 
 from contract_nli.dataset.loader import NLILabel
+from contract_nli.model.identification_classification.model_output import \
+    IdentificationClassificationModelOutput
 
 logger = logging.get_logger(__name__)
-
-
-def update_config(config, *, impossible_strategy, class_loss_weight):
-
-    class IdentificationClassificationConfig(type(config)):
-        def __init__(self, impossible_strategy='ignore', class_loss_weight= 1.0, **kwargs):
-            super().__init__(**kwargs)
-            self.impossible_strategy = impossible_strategy
-            self.class_loss_weight = class_loss_weight
-
-        @classmethod
-        def from_config(cls, config, *, impossible_strategy, class_loss_weight):
-            kwargs = config.to_dict()
-            assert 'impossible_strategy' not in kwargs
-            kwargs['impossible_strategy'] = impossible_strategy
-            assert 'class_loss_weight' not in kwargs
-            kwargs['class_loss_weight'] = class_loss_weight
-            return cls(**kwargs)
-
-    return IdentificationClassificationConfig.from_config(
-        config, impossible_strategy=impossible_strategy,
-        class_loss_weight=class_loss_weight)
-
-
-@dataclass
-class IdentificationClassificationModelOutput(ModelOutput):
-    loss: Optional[torch.FloatTensor] = None
-    loss_cls: Optional[torch.FloatTensor] = None
-    loss_span: Optional[torch.FloatTensor] = None
-    class_logits: torch.FloatTensor = None
-    span_logits: torch.FloatTensor = None
 
 
 class BertForIdentificationClassification(BertPreTrainedModel):
