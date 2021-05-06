@@ -18,7 +18,7 @@ def gen():
         "gradient_accumulation_steps": [3],
         "adam_epsilon": [1e-8],
         "max_grad_norm": [1.0],
-        "num_epochs": [10],
+        "num_epochs": [5],
         "max_steps": [None],
         "lang_id": [None],
         "valid_steps": [3000],
