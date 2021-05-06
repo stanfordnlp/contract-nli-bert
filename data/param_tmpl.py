@@ -28,7 +28,7 @@ def gen():
         "no_cuda": [False],
         "overwrite_cache": [False],
         "task": ['identification_classification'],
-        "symbol_based_hypothesis": [True],
+        "symbol_based_hypothesis": [False],
         'seed': [42]
     }
     params.update({
