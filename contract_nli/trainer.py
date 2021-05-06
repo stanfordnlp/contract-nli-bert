@@ -325,6 +325,7 @@ class Trainer(object):
         else:
             self.converter = classification_converter
 
+        torch.cuda.empty_cache()
         self.optimizer.load_state_dict(torch.load(os.path.join(checkpoint_dir, "optimizer.pt")))
         self.scheduler.load_state_dict(torch.load(os.path.join(checkpoint_dir, "scheduler.pt")))
 
