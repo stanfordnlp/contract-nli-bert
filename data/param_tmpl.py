@@ -26,7 +26,7 @@ def gen():
         "fp16": [False],
         "fp16_opt_level": ['O1'],
         "no_cuda": [False],
-        "overwrite_cache": [True],
+        "overwrite_cache": [False],
         "task": ['identification_classification'],
         "symbol_based_hypothesis": [True],
         'seed': [42]
