@@ -328,8 +328,11 @@ class Trainer(object):
         self.optimizer.load_state_dict(torch.load(os.path.join(checkpoint_dir, "optimizer.pt")))
         self.scheduler.load_state_dict(torch.load(os.path.join(checkpoint_dir, "scheduler.pt")))
 
-        model_to_load = self.model.module if hasattr(self.model, "module") else self.model
-        self.model = type(model_to_load).from_pretrained(checkpoint_dir)
+        model_cls = type(self.model.module if hasattr(self.model, "module") else self.model)
+        self.model.to('cpu')
+        del self.model
+        torch.cuda.empty_cache()
+        self.model = model_cls.from_pretrained(checkpoint_dir)
 
         self.deployed = False
 
