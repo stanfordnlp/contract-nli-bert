@@ -184,13 +184,15 @@ class Trainer(object):
             total=int(self.max_steps), initial=self.global_step,
             desc=f"Train (epoch {self.current_epoch + 1})", disable=not self.is_top
         )
+        step = 0
         while (self.global_step + 1) <= self.max_steps:
             if self.local_rank != -1:
                 self.train_dataloader.sampler.set_epoch(self.current_epoch)
             pbar.set_description(desc=f"Train (epoch {self.current_epoch + 1})")
-            for step, batch in enumerate(self.train_dataloader):
+            for batch in self.train_dataloader:
                 # Skip past any already trained steps if resuming training
                 if (step // self.gradient_accumulation_steps) < self.current_step:
+                    step += 1
                     continue
 
                 loss = self.run_batch(batch, train=True)
@@ -230,7 +232,7 @@ class Trainer(object):
 
                     if self.is_top and self.save_steps > 0 and self.global_step % self.save_steps == 0:
                         self.save()
-
+                step += 1
                 if (self.global_step + 1) >= self.max_steps:
                     break
         pbar.close()
