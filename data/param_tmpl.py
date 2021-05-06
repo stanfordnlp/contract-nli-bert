@@ -10,7 +10,7 @@ def gen():
         "config_name": [None],
         "tokenizer_name": [None],
         "cache_dir": [None],
-        "max_seq_length": [10000],
+        "max_seq_length": [512],
         "max_query_length": [256],
         "do_lower_case": [True],
         "per_gpu_train_batch_size": [1],
