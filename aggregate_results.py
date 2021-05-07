@@ -26,14 +26,16 @@ def parse_args():
 
 def aggregate_path(path):
     results = []
-    for out_dir in glob.glob(os.path.join(path, "param_*")):
+    for out_dir in glob.glob(os.path.join(path, "conf_*")):
         with open(os.path.join(out_dir, 'metrics.json')) as fin:
             dev_result = json.load(fin)
+        with open(os.path.join(out_dir, 'test_metrics.json')) as fin:
+            test_result = json.load(fin)
 
         conf = load_conf(os.path.join(out_dir, 'conf.yml'))
         del conf['raw_yaml']
         results.append({
-            'test': None,
+            'test': test_result,
             'dev': dev_result,
             'conf': conf,
             'path': out_dir
@@ -67,7 +69,7 @@ def run(path, out, num, metric):
         sorted(results, key=lambda r: -recursive_get(r['dev'], metric_keys)))
     if num > 0:
         results = results[:num]
-    results_agg = aggregate_metrics([r['dev'] for r in results])
+    results_agg = aggregate_metrics([r['test'] for r in results])
 
     fout = sys.stdout if out is None else open(out, 'w')
 
