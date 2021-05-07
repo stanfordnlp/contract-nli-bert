@@ -62,8 +62,7 @@ def main(model_dir, dataset_path, output_prefix):
         else:
             raise ValueError(f'Unsupported model type {config.model_type}')
         model = cls.from_pretrained(
-            conf['model_name_or_path'],
-            cache_dir=conf['cache_dir']
+            model_dir, cache_dir=conf['cache_dir']
         )
     else:
         model = BertForClassification.from_pretrained(
