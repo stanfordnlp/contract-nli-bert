@@ -31,7 +31,7 @@ from contract_nli.dataset.dataset import load_and_cache_examples, load_and_cache
 from contract_nli.dataset.encoder import SPAN_TOKEN
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.identification_classification import \
-    BertForIdentificationClassification, DeBertaForIdentificationClassification, update_config
+    MODEL_TYPE_TO_CLASS, update_config
 from contract_nli.model.classification import BertForClassification
 from contract_nli.postprocess import format_json
 from contract_nli.predictor import predict, predict_classification
@@ -105,13 +105,7 @@ def main(conf, output_dir, local_rank, shared_filesystem):
             config = update_config(
                 config, impossible_strategy='ignore',
                 class_loss_weight=conf['class_loss_weight'])
-            if config.model_type == 'bert':
-                cls = BertForIdentificationClassification
-            elif config.model_type == 'deberta':
-                cls = DeBertaForIdentificationClassification
-            else:
-                raise ValueError(f'Unsupported model type {config.model_type}')
-            model = cls.from_pretrained(
+            model = MODEL_TYPE_TO_CLASS[config.model_type].from_pretrained(
                 conf['model_name_or_path'],
                 from_tf=bool(".ckpt" in conf['model_name_or_path']),
                 config=config,

@@ -13,7 +13,7 @@ from contract_nli.dataset.dataset import load_and_cache_examples, \
 from contract_nli.evaluation import evaluate_all
 from contract_nli.model.classification import BertForClassification
 from contract_nli.model.identification_classification import \
-    BertForIdentificationClassification, DeBertaForIdentificationClassification
+    MODEL_TYPE_TO_CLASS
 from contract_nli.postprocess import format_json
 from contract_nli.predictor import predict, predict_classification
 
@@ -55,13 +55,7 @@ def main(model_dir, dataset_path, output_prefix):
         cache_dir=conf['cache_dir']
     )
     if conf['task'] == 'identification_classification':
-        if config.model_type == 'bert':
-            cls = BertForIdentificationClassification
-        elif config.model_type == 'deberta':
-            cls = DeBertaForIdentificationClassification
-        else:
-            raise ValueError(f'Unsupported model type {config.model_type}')
-        model = cls.from_pretrained(
+        model = MODEL_TYPE_TO_CLASS[config.model_type].from_pretrained(
             model_dir, cache_dir=conf['cache_dir']
         )
     else:
