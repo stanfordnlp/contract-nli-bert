@@ -28,6 +28,8 @@ from torch.utils.data import DataLoader, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 from transformers import AdamW, get_linear_schedule_with_warmup
+import sklearn.metrics
+import scipy.special
 
 from contract_nli.batch_converter import classification_converter, identification_classification_converter
 from contract_nli.summary_writer import SummaryWriter
@@ -257,7 +259,7 @@ class Trainer(object):
             self.model.eval()
         inputs = self.converter(batch, self.model, self.device)
         outputs = self.model(**inputs)
-        # model outputs are always tuple in transformers (see doc)
+
         loss, loss_cls = outputs.loss, outputs.loss_cls,
         if self.task == 'identification_classification':
             loss_span = outputs.loss_span
@@ -273,8 +275,20 @@ class Trainer(object):
             self.tb_writer.add_scalar(f"{prefix}/lr", self.scheduler.get_last_lr()[0])
             self.tb_writer.add_scalar(f"{prefix}/loss", loss.item())
             self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
+            self.tb_writer.add_scalar(
+                f'{prefix}/accuracy_nli',
+                (np.argmax(outputs.class_logits.detach().numpy(), axis=1) == inputs['class_labels'].numpy()).mean())
             if self.task == 'identification_classification':
                 self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
+                mask = inputs['p_mask'].numpy()
+                probs = scipy.special.softmax(outputs.span_logits.detach().numpy(), axis=2)[:, :, 1]
+                labels = inputs['span_labels'].numpy().copy()
+                labels[:, :, 0] = 1
+                self.tb_writer.add_scalar(
+                    f'{prefix}/map_span',
+                    sklearn.metrics.average_precision_score(
+                        labels.flat[mask.flat == 0],
+                        probs.flat[mask.flat == 0]))
 
         return loss
 
