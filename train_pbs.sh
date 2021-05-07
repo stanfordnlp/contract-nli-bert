@@ -19,7 +19,7 @@ if [ "$3" -eq 1 ]; then
     COMMAND="(python -m torch.distributed.launch --nproc_per_node=4 train.py $2 $logdir \\&\\& python test.py $logdir ./data/test.json $logdir/test_)"
     RESOURCE="rt_G.large=1"
 elif [ "$3" -eq 0 ]; then
-    COMMAND="(python train.py $2 $logdir && python test.py $logdir ./data/test.json $logdir/test_)"
+    COMMAND="(python train.py $2 $logdir \\&\\& python test.py $logdir ./data/test.json $logdir/test_)"
     RESOURCE="rt_G.small=1"
 else
     echo "MULTI_GPU must be either 1 (multi-gpu training) or 0 (single GPU training)."
