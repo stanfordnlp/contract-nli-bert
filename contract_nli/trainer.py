@@ -284,11 +284,12 @@ class Trainer(object):
                 probs = scipy.special.softmax(outputs.span_logits.detach().numpy(), axis=2)[:, :, 1]
                 labels = inputs['span_labels'].numpy().copy()
                 labels[:, :, 0] = 1
-                self.tb_writer.add_scalar(
-                    f'{prefix}/map_span',
-                    sklearn.metrics.average_precision_score(
-                        labels.flat[mask.flat == 0],
-                        probs.flat[mask.flat == 0]))
+                if len(set(labels.flat[mask.flat == 0])) > 1:
+                    self.tb_writer.add_scalar(
+                        f'{prefix}/map_span',
+                        sklearn.metrics.average_precision_score(
+                            labels.flat[mask.flat == 0],
+                            probs.flat[mask.flat == 0]))
 
         return loss
 
