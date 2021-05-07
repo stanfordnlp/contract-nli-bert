@@ -21,7 +21,7 @@ def gen():
         "num_epochs": [5],
         "max_steps": [None],
         "lang_id": [None],
-        "valid_steps": [3000],
+        "valid_steps": [1000],
         "save_steps": [-1],
         "fp16": [False],
         "fp16_opt_level": ['O1'],
