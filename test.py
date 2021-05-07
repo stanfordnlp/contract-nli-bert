@@ -5,14 +5,15 @@ import os
 import click
 import torch
 import transformers
-from transformers import AutoTokenizer
+from transformers import AutoConfig, AutoTokenizer
 
 from contract_nli.conf import load_conf
-from contract_nli.dataset.dataset import load_and_cache_examples, load_and_cache_features
+from contract_nli.dataset.dataset import load_and_cache_examples, \
+    load_and_cache_features
 from contract_nli.evaluation import evaluate_all
-from contract_nli.model.identification_classification import \
-    BertForIdentificationClassification
 from contract_nli.model.classification import BertForClassification
+from contract_nli.model.identification_classification import \
+    BertForIdentificationClassification, DeBertaForIdentificationClassification
 from contract_nli.postprocess import format_json
 from contract_nli.predictor import predict, predict_classification
 
@@ -49,9 +50,21 @@ def main(model_dir, dataset_path, output_prefix):
         cache_dir=conf['cache_dir'],
         use_fast=False
     )
+    config = AutoConfig.from_pretrained(
+        model_dir,
+        cache_dir=conf['cache_dir']
+    )
     if conf['task'] == 'identification_classification':
-        model = BertForIdentificationClassification.from_pretrained(
-            model_dir, cache_dir=conf['cache_dir'])
+        if config.model_type == 'bert':
+            cls = BertForIdentificationClassification
+        elif config.model_type == 'deberta':
+            cls = DeBertaForIdentificationClassification
+        else:
+            raise ValueError(f'Unsupported model type {config.model_type}')
+        model = cls.from_pretrained(
+            conf['model_name_or_path'],
+            cache_dir=conf['cache_dir']
+        )
     else:
         model = BertForClassification.from_pretrained(
             model_dir, cache_dir=conf['cache_dir'])
