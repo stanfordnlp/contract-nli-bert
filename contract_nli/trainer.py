@@ -277,13 +277,13 @@ class Trainer(object):
             self.tb_writer.add_scalar(f"{prefix}/loss_cls", loss_cls.item())
             self.tb_writer.add_scalar(
                 f'{prefix}/accuracy_nli',
-                (np.argmax(outputs.class_logits.detach().numpy(), axis=1) == inputs['class_labels'].numpy()).mean())
+                (np.argmax(outputs.class_logits.detach().cpu().numpy(), axis=1) == inputs['class_labels'].cpu().numpy()).mean())
             if self.task == 'identification_classification':
                 self.tb_writer.add_scalar(f"{prefix}/loss_span", loss_span.item())
-                mask = inputs['p_mask'].numpy()
-                probs = scipy.special.softmax(outputs.span_logits.detach().numpy(), axis=2)[:, :, 1]
-                labels = inputs['span_labels'].numpy().copy()
-                labels[:, :, 0] = 1
+                mask = inputs['p_mask'].cpu().numpy()
+                probs = scipy.special.softmax(outputs.span_logits.detach().cpu().numpy(), axis=2)[:, :, 1]
+                labels = inputs['span_labels'].cpu().numpy().copy()
+                labels[:, 0] = 1
                 if len(set(labels.flat[mask.flat == 0])) > 1:
                     self.tb_writer.add_scalar(
                         f'{prefix}/map_span',
