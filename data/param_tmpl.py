@@ -29,7 +29,8 @@ def gen():
         "overwrite_cache": [False],
         "task": ['identification_classification'],
         "symbol_based_hypothesis": [False],
-        'seed': [42]
+        'seed': [42],
+        'early_stopping': [True]
     }
     params.update({
         "doc_stride": [64, 128],
