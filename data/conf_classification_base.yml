@@ -56,6 +56,8 @@ lang_id: null
 # Validate every n steps
 valid_steps: 200
 
+early_stopping: true
+
 # save model every n steps
 save_steps: -1
 

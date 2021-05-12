@@ -250,7 +250,7 @@ def main(conf, output_dir, local_rank, shared_filesystem):
     if local_rank != -1:
         trainer.local_rank = -1
 
-    if os.path.exists(trainer.best_checkpoint_dir):
+    if conf['early_stopping'] and os.path.exists(trainer.best_checkpoint_dir):
         logger.info(f"Loading best model from {trainer.best_checkpoint_dir}")
         trainer.load(trainer.best_checkpoint_dir)
         trainer.deploy()
