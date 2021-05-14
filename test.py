@@ -71,13 +71,13 @@ def main(dev_dataset_path, model_dir, dataset_path, output_prefix):
                 '--dev-dataset-path',
                 '--dev-dataset-path cannot be used when the task is not identification_classification')
         examples = load_and_cache_examples(
-            dataset_path,
+            dev_dataset_path,
             local_rank=-1,
             overwrite_cache=True,
             cache_dir='.'
         )
         dataset, features = load_and_cache_features(
-            dataset_path,
+            dev_dataset_path,
             examples,
             tokenizer,
             max_seq_length=conf['max_seq_length'],
@@ -137,14 +137,17 @@ def main(dev_dataset_path, model_dir, dataset_path, output_prefix):
             per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
             device=device, n_gpu=n_gpu)
 
-    metrics = evaluate_all(examples, all_results,
-                           [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
-    logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
-    with open(output_prefix + 'metrics.json', 'w') as fout:
-        json.dump(metrics, fout, indent=2)
     result_json = format_json(examples, all_results)
     with open(output_prefix + 'result.json', 'w') as fout:
         json.dump(result_json, fout, indent=2)
+    with open(dataset_path) as fin:
+        test_dataset = json.load(fin)
+    metrics = evaluate_all(test_dataset, result_json,
+                           [1, 3, 5, 8, 10, 15, 20, 30, 40, 50],
+                           conf['task'])
+    logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
+    with open(output_prefix + 'metrics.json', 'w') as fout:
+        json.dump(metrics, fout, indent=2)
 
 
 if __name__ == "__main__":

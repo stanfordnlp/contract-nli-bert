@@ -279,14 +279,17 @@ def main(conf, output_dir, local_rank, shared_filesystem):
                 model, dev_dataset, dev_features,
                 per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
                 device=device, n_gpu=n_gpu)
-        metrics = evaluate_all(dev_examples, all_results,
-                               [1, 3, 5, 8, 10, 15, 20, 30, 40, 50])
-        logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
-        with open(os.path.join(output_dir, f'metrics.json'), 'w') as fout:
-            json.dump(metrics, fout, indent=2)
         result_json = format_json(dev_examples, all_results)
         with open(os.path.join(output_dir, f'result.json'), 'w') as fout:
             json.dump(result_json, fout, indent=2)
+        with open(conf['dev_file']) as fin:
+            dev_json = json.load(fin)
+        metrics = evaluate_all(dev_json, result_json,
+                               [1, 3, 5, 8, 10, 15, 20, 30, 40, 50],
+                               conf['task'])
+        logger.info(f"Results@: {json.dumps(metrics, indent=2)}")
+        with open(os.path.join(output_dir, f'metrics.json'), 'w') as fout:
+            json.dump(metrics, fout, indent=2)
 
 
 if __name__ == "__main__":
