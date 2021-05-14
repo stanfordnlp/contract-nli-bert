@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 import torch
 from torch.utils.data import DataLoader, SequentialSampler
@@ -22,7 +22,8 @@ def to_list(tensor):
 
 
 def predict(model, dataset, examples, features, *, per_gpu_batch_size: int,
-            device, n_gpu: int, weight_class_probs_by_span_probs: bool
+            device, n_gpu: int, weight_class_probs_by_span_probs: bool,
+            calibration_coeff: Optional[float] = None
             ) -> List[IdentificationClassificationResult]:
     # We do not implement this as a part of Trainer, because we want to run
     # inference without instanizing optimizers
@@ -66,7 +67,8 @@ def predict(model, dataset, examples, features, *, per_gpu_batch_size: int,
         examples,
         features,
         all_results,
-        weight_class_probs_by_span_probs=weight_class_probs_by_span_probs
+        weight_class_probs_by_span_probs=weight_class_probs_by_span_probs,
+        calibration_coeff=calibration_coeff
     )
 
     return all_results

@@ -1,5 +1,5 @@
 import collections
-from typing import List, Union
+from typing import List, Union, Optional
 
 import numpy as np
 from scipy.special import softmax
@@ -32,7 +32,8 @@ def compute_predictions_logits(
         all_examples: List[ContractNLIExample],
         all_features: List[IdentificationClassificationFeatures],
         all_results: List[IdentificationClassificationPartialResult],
-        weight_class_probs_by_span_probs: bool
+        weight_class_probs_by_span_probs: bool,
+        calibration_coeff: Optional[float]
         ) -> List[IdentificationClassificationResult]:
     example_index_to_features = collections.defaultdict(list)
     for feature in all_features:
@@ -68,6 +69,10 @@ def compute_predictions_logits(
             class_probs = (np.array(class_probs) * weight[:, None]).sum(0)
         else:
             class_probs = np.array(class_probs).mean(0)
+        if calibration_coeff is not None:
+            class_ll = np.log(class_probs)
+            class_ll[0] -= calibration_coeff
+            class_probs = softmax(class_ll)
         assert abs(1.0 - class_probs.sum()) < 0.001
         results.append(IdentificationClassificationResult(
             data_id=example.data_id,
@@ -126,3 +131,26 @@ def format_json(
             for document in documents.values()]
         assert len(set(all_hypothesis_ids)) == 1
     return sorted(documents.values(), key=lambda d: d['id'])
+
+
+def compute_prob_calibration_coeff(
+        examples: List[ContractNLIExample],
+        results: List[IdentificationClassificationResult]):
+    data_id_to_result = {r.data_id: r for r in results}
+    y_prob = []
+    y_true = []
+    for example in examples:
+        y_true.append(example.label.value)
+        result = data_id_to_result[example.data_id]
+        y_prob.append(result.class_probs)
+    y_prob = np.array(y_prob)
+    y_true = np.array(y_true)
+    y_ll = np.log(y_prob)
+    # get all coeffs that can flip the prediction
+    coeffs = np.concatenate([
+        y_ll[:, 0] - y_ll[:, 1], y_ll[:, 0] - y_ll[:, 2], [0.0]])
+    # (len(threths), len(y_true), 3)
+    y_ll_all = y_ll[None, :, :] - np.concatenate((coeffs[:, None, None], np.zeros((len(coeffs), 1, 2))), axis=2)
+    y_pred_all = np.argmax(y_ll_all, axis=2)
+    accuracies = (y_true[None, :] == y_pred_all).mean(axis=1)
+    return coeffs[np.argmax(accuracies)]

@@ -14,17 +14,18 @@ from contract_nli.evaluation import evaluate_all
 from contract_nli.model.classification import BertForClassification
 from contract_nli.model.identification_classification import \
     MODEL_TYPE_TO_CLASS
-from contract_nli.postprocess import format_json
+from contract_nli.postprocess import format_json, compute_prob_calibration_coeff
 from contract_nli.predictor import predict, predict_classification
 
 logger = logging.getLogger(__name__)
 
 
 @click.command()
+@click.option('--dev-dataset-path', type=click.Path(exists=True), default=None)
 @click.argument('model-dir', type=click.Path(exists=True))
 @click.argument('dataset-path', type=click.Path(exists=True))
 @click.argument('output-prefix', type=str)
-def main(model_dir, dataset_path, output_prefix):
+def main(dev_dataset_path, model_dir, dataset_path, output_prefix):
     conf: dict = load_conf(os.path.join(model_dir, 'conf.yml'))
 
     device = torch.device("cuda" if torch.cuda.is_available() and not conf['no_cuda'] else "cpu")
@@ -64,6 +65,43 @@ def main(model_dir, dataset_path, output_prefix):
 
     model.to(device)
 
+    if dev_dataset_path is not None:
+        if conf['task'] != 'identification_classification':
+            raise click.BadOptionUsage(
+                '--dev-dataset-path',
+                '--dev-dataset-path cannot be used when the task is not identification_classification')
+        examples = load_and_cache_examples(
+            dataset_path,
+            local_rank=-1,
+            overwrite_cache=True,
+            cache_dir='.'
+        )
+        dataset, features = load_and_cache_features(
+            dataset_path,
+            examples,
+            tokenizer,
+            max_seq_length=conf['max_seq_length'],
+            doc_stride=conf.get('doc_stride', None),
+            max_query_length=conf['max_query_length'],
+            dataset_type=conf['task'],
+            symbol_based_hypothesis=conf['symbol_based_hypothesis'],
+            threads=None,
+            local_rank=-1,
+            overwrite_cache=True,
+            labels_available=True,
+            cache_dir='.'
+        )
+        all_results = predict(
+            model, dataset, examples, features,
+            per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
+            device=device, n_gpu=n_gpu,
+            weight_class_probs_by_span_probs=conf[
+                'weight_class_probs_by_span_probs'])
+        calibration_coeff = compute_prob_calibration_coeff(
+            examples, all_results)
+    else:
+        calibration_coeff = None
+
     examples = load_and_cache_examples(
         dataset_path,
         local_rank=-1,
@@ -91,7 +129,8 @@ def main(model_dir, dataset_path, output_prefix):
             model, dataset, examples, features,
             per_gpu_batch_size=conf['per_gpu_eval_batch_size'],
             device=device, n_gpu=n_gpu,
-            weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'])
+            weight_class_probs_by_span_probs=conf['weight_class_probs_by_span_probs'],
+            calibration_coeff=calibration_coeff)
     else:
         all_results = predict_classification(
             model, dataset, features,
