@@ -144,6 +144,8 @@ def evaluate_all(
         result = id_to_result[document['id']]['annotation_sets'][0]['annotations']
         annotations = document['annotation_sets'][0]['annotations']
         for label_id in label_ids:
+            if task == 'classification' and label_id not in result:
+                continue
             if task in ['identification_classification', 'classification']:
                 class_labels[label_id].append(NLILabel.from_str(annotations[label_id]['choice']).value)
                 class_probs[label_id].append(
@@ -161,6 +163,12 @@ def evaluate_all(
             l for l in label_ids
             if NLILabel.CONTRADICTION.value in class_labels[l] and
                NLILabel.ENTAILMENT.value in class_labels[l]]
+        # this is not necessarily true with some training dataset
+        # but we have to assume this for our evaluation to be a fair comparison
+        if not set(class_probs.keys()).issuperset(set(binary_label_ids)):
+            raise ValueError(
+                'Some label ids are not in prediction when they are valid label '
+                f'ids. Pred: {class_probs.keys()}, Dataset: {binary_label_ids}')
     if task in ['identification_classification', 'identification']:
         preds_at_ks = {
             k: {label_id: [predict_at_k(y_prob, k) for y_prob in y_probs]
@@ -245,14 +253,6 @@ def evaluate_all(
         ])
 
     metrics['micro_label_macro_doc'] = dict()
-    if task in ['identification_classification', 'classification']:
-        metrics['micro_label_macro_doc']['class_binary'] = _macro_average([
-            evaluate_class(
-                np.array([class_labels[l][i] for l in binary_label_ids if class_labels[l][i] != NLILabel.NOT_MENTIONED.value]),
-                remove_not_mentioned(np.stack([class_probs[l][i] for l in binary_label_ids if class_labels[l][i] != NLILabel.NOT_MENTIONED.value])))
-            for i in range(len(class_labels[label_ids[0]]))
-            if any((class_labels[l][i] != NLILabel.NOT_MENTIONED.value for l in binary_label_ids))
-        ])
     if task == 'identification_classification':
         metrics['micro_label_macro_doc']['class'] = _macro_average([
             evaluate_class(
