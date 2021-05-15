@@ -27,17 +27,20 @@ def evaluate_predicted_spans(y_true, y_pred) -> Dict[str, float]:
     }
 
 
-def precision_at_recall(y_true, y_prob, recall):
-    if np.sum(y_true) == 0:
+def precision_at_recall(y_true, y_prob, recall: float):
+    assert 0. <= recall <= 1.0
+    if len(y_true) == 0 or np.sum(y_true) == 0:
         return np.nan
     threshs = np.sort(np.unique(y_prob))[::-1]
     # (len(np.unique(y_prob)), len(y_prob)) where first axis show prediction at different thresh
-    y_preds = y_prob[None, :] > threshs[:, None]
+    y_preds = y_prob[None, :] >= threshs[:, None]
     recalls = np.logical_and(y_true[None, :], y_preds).sum(axis=1) / np.sum(y_true)
     # check that recalls are monotonically increasing
     assert np.all(recalls == np.sort(recalls))
+    # because of >= relationship, there exist at least one thresh that gives
+    # recall score of 1.0
     thresh = threshs[np.where(recalls >= recall)[0][0]]
-    y_pred = y_prob > thresh
+    y_pred = y_prob >= thresh
     return sklearn.metrics.precision_score(y_true, y_pred, zero_division=0.)
 
 
