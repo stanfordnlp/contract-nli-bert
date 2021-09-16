@@ -11,22 +11,22 @@ class NLILabel(enum.Enum):
 
     @classmethod
     def from_str(cls, s: str):
-        if s == 'na':
+        if s == 'NotMentioned':
             return cls.NOT_MENTIONED
-        elif s == 'true':
+        elif s == 'Entailment':
             return cls.ENTAILMENT
-        elif s == 'false':
+        elif s == 'Contradiction':
             return cls.CONTRADICTION
         else:
             raise ValueError(f'Invalid input "{"s"}" to NLILabel.from_str.')
 
     def to_anno_name(self):
         if self == NLILabel.NOT_MENTIONED:
-            return 'na'
+            return 'NotMentioned'
         elif self == NLILabel.ENTAILMENT:
-            return 'true'
+            return 'Entailment'
         elif self == NLILabel.CONTRADICTION:
-            return 'false'
+            return 'Contradiction'
         else:
             assert not 'Should not get here'
 

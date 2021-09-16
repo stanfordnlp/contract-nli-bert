@@ -398,105 +398,105 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33,
                 39
               ]
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 47
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 51
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 89,
                 90
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 17
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 65
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 29
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 48
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 43
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 48
               ]
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 28
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 43
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 13,
@@ -1352,11 +1352,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 62,
                 63,
@@ -1366,7 +1366,7 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 82,
                 93,
@@ -1374,13 +1374,13 @@
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 86
               ]
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24,
                 25,
@@ -1388,42 +1388,42 @@
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 62,
                 64
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30,
                 32
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24,
                 27
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 41,
                 42,
@@ -1431,27 +1431,27 @@
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 42,
                 47
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 60
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30,
                 33
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 41,
                 42,
@@ -1459,7 +1459,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 41,
                 42,
@@ -2058,83 +2058,83 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 77
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 95
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 13
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 64
               ]
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 13
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 57,
                 58
@@ -2604,87 +2604,87 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 24
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 52,
                 77
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 39
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 27
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 39
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36
               ]
@@ -2949,75 +2949,75 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9,
                 10
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 21
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 22,
@@ -3025,13 +3025,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -3646,11 +3646,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 88,
                 145,
@@ -3658,23 +3658,23 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 113
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 90,
                 93,
@@ -3682,7 +3682,7 @@
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 62,
                 63,
@@ -3693,7 +3693,7 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 93,
                 95,
@@ -3701,34 +3701,34 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 48
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 51
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 70,
                 71,
@@ -3743,7 +3743,7 @@
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 93,
                 95,
@@ -3753,14 +3753,14 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 48
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 87
@@ -3874,75 +3874,75 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
@@ -4103,89 +4103,89 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 20,
                 22
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 17
               ]
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 20,
                 24
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
@@ -4414,98 +4414,98 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5,
                 6
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 29
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 23
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 7
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 12
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 22
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 12
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -4908,83 +4908,83 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 22,
                 23
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33
               ]
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22,
                 23
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
@@ -5293,85 +5293,85 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 13
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 27
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 22,
                 23
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
@@ -5640,99 +5640,99 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 15,
                 16
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 16
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 40
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 21
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 16
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 20
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25
               ]
@@ -6141,95 +6141,95 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 50
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 14,
                 18
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 33
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 46
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 40,
                 41
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 31
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
@@ -6554,97 +6554,97 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 41
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 51
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 18
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 25
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 13
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 19
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 13
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 14,
@@ -6896,43 +6896,43 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 10,
@@ -6941,38 +6941,38 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 19
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 9,
@@ -6981,13 +6981,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -7370,98 +7370,98 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 54
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9,
                 10
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 12
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 39
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 22
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 37
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 40
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 23
@@ -7915,37 +7915,37 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 54
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 76
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 14
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 69,
                 70,
@@ -7955,11 +7955,11 @@
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 69,
                 70,
@@ -7968,49 +7968,49 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 37
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 38
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 47,
                 50
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35,
                 37
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 29
@@ -8656,65 +8656,65 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 23,
                 25
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 23,
                 24
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 94
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 66,
                 70
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 74
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 24
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 80,
                 81,
@@ -8723,39 +8723,39 @@
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 40,
                 44
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 53,
                 54
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 66,
                 69
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 40,
                 44
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 40,
@@ -9368,15 +9368,15 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 101,
                 103,
@@ -9384,11 +9384,11 @@
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 16,
                 17,
@@ -9399,20 +9399,20 @@
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 16,
                 20
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 98
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 23,
@@ -9420,7 +9420,7 @@
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 92,
                 93,
@@ -9429,7 +9429,7 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 17,
@@ -9437,21 +9437,21 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 63
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 69,
                 71,
@@ -9459,7 +9459,7 @@
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 23,
@@ -9467,13 +9467,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 63
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 52,
                 57
@@ -9755,89 +9755,89 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 22
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 30
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 29
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 28
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 26
@@ -9987,11 +9987,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 20,
@@ -9999,25 +9999,25 @@
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 10,
@@ -10027,48 +10027,48 @@
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9,
                 10
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 11
@@ -10278,96 +10278,96 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5,
                 8
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8,
                 9
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 24
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 18
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 11
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 17
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
@@ -10632,17 +10632,17 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 26,
@@ -10650,35 +10650,35 @@
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 15
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13,
                 15,
@@ -10686,37 +10686,37 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 24
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 30
               ]
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 20
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
@@ -11033,15 +11033,15 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13,
                 14,
@@ -11051,77 +11051,77 @@
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 58,
                 60
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 32
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 13,
                 20
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 58,
                 60
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 31
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 13,
@@ -11129,7 +11129,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13,
                 19
@@ -11411,26 +11411,26 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34,
                 40
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 8,
                 13,
@@ -11443,18 +11443,18 @@
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 56,
                 58
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 27,
@@ -11462,11 +11462,11 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8,
                 12,
@@ -11475,28 +11475,28 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 25,
                 27
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 27,
@@ -11504,13 +11504,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 26
@@ -11772,67 +11772,67 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 29
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 19
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 32
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 10,
@@ -11840,25 +11840,25 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 22
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 20
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 10,
@@ -11866,7 +11866,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 14,
@@ -12909,60 +12909,60 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 56,
                 57
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 86
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 30
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 59,
                 61
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36,
                 40
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 56,
                 58
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 29,
@@ -12970,42 +12970,42 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 51
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 62
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36,
                 39
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 51
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 32
               ]
@@ -13486,33 +13486,33 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 49
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 11,
                 12
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 13,
@@ -13522,7 +13522,7 @@
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 90,
                 92,
@@ -13530,7 +13530,7 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 20,
@@ -13538,53 +13538,53 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 12
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 30
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 19
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 30
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28
               ]
@@ -13753,84 +13753,84 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 2
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 2
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5,
                 9
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
@@ -13991,77 +13991,77 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
@@ -14482,54 +14482,54 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 39
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 93
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 32
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 24,
@@ -14539,40 +14539,40 @@
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 20
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 88
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 32
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 20
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 87
               ]
@@ -15397,22 +15397,22 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33,
                 34
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8,
                 9,
@@ -15426,7 +15426,7 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 12,
                 13,
@@ -15439,13 +15439,13 @@
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 19
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 58,
@@ -15456,30 +15456,30 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 30
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 55
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28,
@@ -15492,28 +15492,28 @@
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 37,
                 40
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 60,
                 61
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 29
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28,
@@ -15526,7 +15526,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37,
                 39
@@ -15804,94 +15804,94 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 3,
                 36
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 13
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 3
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 13
               ]
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 32,
                 35
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4,
                 12
@@ -16173,29 +16173,29 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22,
                 23
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 9
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 6,
                 7,
@@ -16203,63 +16203,63 @@
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 15
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 18,
                 19
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 13
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 19
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
@@ -16516,30 +16516,30 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25,
                 34
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 4,
                 5,
@@ -16548,68 +16548,68 @@
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 22
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4,
                 6
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 12
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 23
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 20
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -16792,92 +16792,92 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 12
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 10
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 19
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 5,
                 12
               ]
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 13
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 6
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 6
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 7
@@ -17099,95 +17099,95 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17
               ]
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8,
                 21
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 6
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 30
               ]
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 10
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22,
                 23
               ]
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 10
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -17582,11 +17582,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 60,
                 61,
@@ -17596,21 +17596,21 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 45,
                 46
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 27
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 23,
                 24,
@@ -17619,11 +17619,11 @@
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 60,
                 65,
@@ -17631,7 +17631,7 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 30,
@@ -17640,7 +17640,7 @@
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 60,
                 61,
@@ -17650,35 +17650,35 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 38
               ]
             },
             "nda-17": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 41
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29,
                 30,
@@ -17687,13 +17687,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 38
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37
               ]
@@ -18174,51 +18174,51 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 31
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 14,
@@ -18226,29 +18226,29 @@
               ]
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -18663,54 +18663,54 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 38
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 29,
                 30
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13,
                 15,
@@ -18719,32 +18719,32 @@
               ]
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 33
               ]
             },
             "nda-5": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36
               ]
@@ -19121,99 +19121,99 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 35
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 12
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 39
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 18
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 14
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 22
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26,
                 27
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 17
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 22
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 20
               ]
@@ -19498,23 +19498,23 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 7,
                 8,
@@ -19525,7 +19525,7 @@
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 7,
@@ -19536,11 +19536,11 @@
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 20,
@@ -19548,11 +19548,11 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 9,
@@ -19561,11 +19561,11 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 32,
@@ -19574,21 +19574,21 @@
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 26,
                 29
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 19
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 20,
@@ -19596,7 +19596,7 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 32,
@@ -19605,7 +19605,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 57
               ]
@@ -19810,79 +19810,79 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 17
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 17
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 25
               ]
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 17
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17
               ]
@@ -20123,28 +20123,28 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 26
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 4,
                 5,
@@ -20153,72 +20153,72 @@
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8,
                 9
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 16
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 10,
                 11
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 18
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 14
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-4": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 19,
                 20
@@ -20552,24 +20552,24 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 29
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 32,
                 33
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 9,
@@ -20581,14 +20581,14 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 7,
                 8
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 7,
                 8,
@@ -20601,11 +20601,11 @@
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 24,
@@ -20613,14 +20613,14 @@
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 30,
                 31
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 8,
@@ -20628,24 +20628,24 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 18
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 29
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 27,
@@ -20653,20 +20653,20 @@
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 23
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15
               ]
@@ -20767,78 +20767,78 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 3,
                 4
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 2
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
@@ -21187,11 +21187,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 53,
@@ -21200,30 +21200,30 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30,
                 31
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 7
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 11
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 17,
@@ -21232,14 +21232,14 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 23
               ]
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 14,
                 53,
@@ -21248,47 +21248,47 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 12
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 24,
                 25
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19,
                 21
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 17
@@ -21438,90 +21438,90 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 6
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 15
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 18,
                 23
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 13
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18
               ]
@@ -21706,84 +21706,84 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 17
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -21886,86 +21886,86 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 1
               ]
             },
             "nda-1": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 2,
                 3
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 10
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 3
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 12
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6,
                 8,
@@ -21973,13 +21973,13 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4
               ]
@@ -22188,94 +22188,94 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 19
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 17
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 4
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 19
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 8
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 14
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 12
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 8
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7
               ]
@@ -22504,11 +22504,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 33,
                 34,
@@ -22516,88 +22516,88 @@
               ]
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 7,
                 8
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 8
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33,
                 35
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 17
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 33,
                 35
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 19
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 21
@@ -22939,15 +22939,15 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37,
                 38,
@@ -22955,7 +22955,7 @@
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 14,
@@ -22965,7 +22965,7 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 12,
                 13,
@@ -22974,27 +22974,27 @@
               ]
             },
             "nda-1": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 12,
                 13
               ]
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 46
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 19
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42,
                 43,
@@ -23003,7 +23003,7 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 13,
@@ -23012,14 +23012,14 @@
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 62,
                 63
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 15,
@@ -23029,24 +23029,24 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 20
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 15,
@@ -23056,7 +23056,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
@@ -23421,11 +23421,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 26,
@@ -23433,38 +23433,38 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42,
                 66
               ]
             },
             "nda-10": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 9
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 54
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 21,
                 26,
@@ -23472,49 +23472,49 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31
               ]
             },
             "nda-17": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 21,
                 25
               ]
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 45
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10,
                 14
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16,
                 17,
@@ -23851,33 +23851,33 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28,
@@ -23888,59 +23888,59 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 18
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28
               ]
             },
             "nda-3": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 22
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 17
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11
               ]
@@ -24537,22 +24537,22 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 31,
                 112
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 43,
                 44,
@@ -24564,23 +24564,23 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 8
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 88
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 19,
@@ -24591,23 +24591,23 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 16
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 78
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 27,
@@ -24615,18 +24615,18 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36,
                 37
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 17,
                 21,
@@ -24637,7 +24637,7 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 27,
@@ -24645,7 +24645,7 @@
               ]
             },
             "nda-4": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 69
               ]
@@ -25190,17 +25190,17 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 72,
                 73,
@@ -25208,7 +25208,7 @@
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 7,
                 8,
@@ -25221,31 +25221,31 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 6
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 76,
                 87
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 14
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 84,
                 85,
@@ -25253,13 +25253,13 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 6
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 57,
                 58,
@@ -25267,7 +25267,7 @@
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 19,
@@ -25275,24 +25275,24 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 36
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 11,
                 13
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 19,
@@ -25300,7 +25300,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 22,
                 27
@@ -25902,11 +25902,11 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 65,
                 66,
@@ -25917,13 +25917,13 @@
               ]
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14,
                 29,
@@ -25931,27 +25931,27 @@
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 14
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 71
               ]
             },
             "nda-12": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-20": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 65,
                 66,
@@ -25962,13 +25962,13 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 14
               ]
             },
             "nda-18": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 42,
                 43,
@@ -25977,7 +25977,7 @@
               ]
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 18,
@@ -25985,25 +25985,25 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 34,
                 35
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 23,
                 25
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15,
                 18,
@@ -26011,7 +26011,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 19,
@@ -26294,49 +26294,49 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 37
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 13
               ]
             },
             "nda-2": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 30,
                 40
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4,
                 8
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 28,
@@ -26349,17 +26349,17 @@
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 2
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 9,
@@ -26368,25 +26368,25 @@
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 21,
                 22
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 4,
                 7
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 9,
@@ -26395,7 +26395,7 @@
               ]
             },
             "nda-4": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 15
               ]
@@ -26684,35 +26684,35 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 8
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 8
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 40,
                 43,
@@ -26720,7 +26720,7 @@
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 12,
@@ -26732,11 +26732,11 @@
               ]
             },
             "nda-20": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 27,
                 29,
@@ -26746,23 +26746,23 @@
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 9,
                 11,
@@ -26774,14 +26774,14 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 18,
                 20
               ]
             },
             "nda-4": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             }
           }
@@ -27200,45 +27200,45 @@
         {
           "annotations": {
             "nda-11": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-16": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-15": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 32,
                 46
               ]
             },
             "nda-10": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 26
               ]
             },
             "nda-2": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 10
               ]
             },
             "nda-1": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-19": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 60,
                 61
               ]
             },
             "nda-12": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 18,
@@ -27247,41 +27247,41 @@
               ]
             },
             "nda-20": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 58
               ]
             },
             "nda-3": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 10
               ]
             },
             "nda-18": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-7": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 20
               ]
             },
             "nda-17": {
-              "choice": "na",
+              "choice": "NotMentioned",
               "spans": []
             },
             "nda-8": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 28,
                 29
               ]
             },
             "nda-13": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 12,
                 15,
@@ -27294,14 +27294,14 @@
               ]
             },
             "nda-5": {
-              "choice": "true",
+              "choice": "Entailment",
               "spans": [
                 5,
                 20
               ]
             },
             "nda-4": {
-              "choice": "false",
+              "choice": "Contradiction",
               "spans": [
                 19,
                 46
