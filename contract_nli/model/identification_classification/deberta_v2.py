@@ -1,3 +1,17 @@
+# Copyright (c) 2021, Hitachi America Ltd. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import torch
 from torch import nn
 from transformers.models.deberta_v2 import DebertaV2PreTrainedModel, DebertaV2Model
@@ -44,17 +58,6 @@ class DeBertaV2ForIdentificationClassification(DebertaV2PreTrainedModel):
         p_mask=None,
         valid_span_missing_in_context=None,
     ) -> IdentificationClassificationModelOutput:
-        r"""
-        span_mask (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
-            Mask to avoid performing loss calculation on non-target token indices.
-            Mask values selected in [0, 1]: 1 for special [S] token that are not masked,
-            0 for other normal tokens that are masked.
-        span_labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
-            Labels for computing the sequence classification/regression loss. Indices should be in :obj:`[0, ...,
-            config.num_labels - 1]`. If :obj:`config.num_labels == 1` a regression loss is computed (Mean-Square loss),
-            If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
-
-        """
         outputs = self.deberta(
             input_ids,
             attention_mask=attention_mask,

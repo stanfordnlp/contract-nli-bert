@@ -1,3 +1,20 @@
+# Copyright 2020 The HuggingFace Team. and Hitachi America Ltd. All rights reserved.
+# This file has been adopted from https://github.com/huggingface/transformers
+# /blob/495c157d6fcfa29f2d9e1173582d2fb5a393c323/src/transformers/data/processors/squad.py
+# and has been modified. See git log for the full details of changes.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from functools import partial
 from multiprocessing import Pool, cpu_count
 from typing import List
@@ -17,16 +34,14 @@ logger = logging.get_logger(__name__)
 
 class ClassificationFeatures:
     """
-    Single example features to be fed to a model. Those features are model-specific and can be crafted from
-    :class:`~contract_nli.dataset.loader.ContractNLIExample` using the
-    :method:`~contract_nli.dataset.encoder_classification.convert_examples_to_features` method.
+    Single example features to be fed to a model.
 
     Args:
         input_ids: Indices of input sequence tokens in the vocabulary.
         attention_mask: Mask to avoid performing attention on padding token indices.
         token_type_ids: Segment token indices to indicate first and second portions of the inputs.
         cls_index: the index of the CLS token.
-        p_mask: Mask identifying tokens that can be answers vs. tokens that cannot.
+        p_mask: Mask identifying tokens that can be answers or not.
             Mask with 1 for tokens than cannot be in the answer and 0 for token that can be in an answer
         example_index: the index of the example
         unique_id: The unique Feature identifier
@@ -34,7 +49,6 @@ class ClassificationFeatures:
         class_label:
         data_id:
     """
-
     def __init__(
         self,
         input_ids,

@@ -2,7 +2,7 @@
 # Copyright (c) 2018, NVIDIA CORPORATION.
 # Copyright (c) 2021, Hitachi America Ltd. All rights reserved.
 # This file has been adopted from https://github.com/huggingface/transformers
-# /blob/0c9bae09340dd8c6fdf6aa2ea5637e956efe0f7c/examples/question-answering/run.py
+# /blob/0c9bae09340dd8c6fdf6aa2ea5637e956efe0f7c/examples/question-answering/run_squad.py
 # See git log for changes.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
